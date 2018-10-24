@@ -1,0 +1,40 @@
+.App {
+  .App-header {
+    background-color: #222;
+    height: 150px;
+    padding: 20px;
+    color: white;
+    text-align: center,
+
+  }
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 80px;
+}
+
+* {
+  margin: 0 auto;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  font-size: 62.5%;
+}
+.App {
+    width: 100%;
+    height: 100%;
+    background: #ebebeb;
+}
+.clear:before, .clear:after {
+    content: "\0020";
+    display: block;
+    height: 0;
+    overflow: hidden;
+}
+.clear:after {
+    clear: both;
+}
+
+::-webkit-scrollbar {
+
+}
