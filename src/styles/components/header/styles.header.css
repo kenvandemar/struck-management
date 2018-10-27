@@ -1,0 +1,23 @@
+.headerContainer {
+  display: flex;
+  flex-direction: row;
+  background-color: #34495e;
+  margin-bottom: 50px;
+  padding-left: 20px;
+  padding-bottom: 5px;
+  padding-top: 5px;
+}
+
+.headerContainer h1 {
+  font-size: 2.7rem;
+  color: #fff;
+}
+
+.headerContainer .faRing {
+  display: flex;
+  align-self: center;
+  color: #fff;
+  margin-left: 10px;
+  margin-top: 10px;
+  font-size: 22px;
+}
