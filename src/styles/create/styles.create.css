@@ -1,0 +1,112 @@
+.createContainer {
+  margin-top: 10px;
+  margin-left: 40px;
+}
+
+.createTitle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-bottom: 1px solid #34495e;
+  width: 35%;
+  margin-bottom: 10px;
+}
+
+.createTitle .faPlusCircle {
+  font-size: 1.5rem;
+  color: #34495e;
+  margin-top: 2px;
+}
+
+.createTitle h1 {
+  font-size: 2.5rem;
+}
+
+.createBody .inputField {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 35%;
+  margin-bottom: 15px;
+}
+
+.leftSideWrapper p,
+.rightSideWrapper p {
+  font-size: 14px;
+  color: #34495e;
+  font-weight: 700;
+  margin: 0 auto;
+  margin-bottom: 5px;
+  margin-top: 10px;
+}
+
+.leftSideWrapper input {
+  height: 20px;
+  width: 170px;
+  outline: none;
+  font-size: 13px;
+  padding-left: 2px;
+}
+
+.truckTypeWrapper {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.truckTypeWrapper input {
+  width: 50px;
+}
+
+.addressWrapper input {
+  height: 20px;
+  width: 200px;
+  font-size: 13px;
+  padding-left: 2px;
+  outline: none;
+}
+
+.productionYear input {
+  height: 15px;
+  width: 100px;
+  font-size: 13px;
+  padding-left: 2px;
+  outline: none;
+}
+
+.descriptionWrapper textarea {
+  width: 90%;
+  height: 10vh;
+  width: 200px;
+  border: 1px solid #cecece;
+  font-size: 13px;
+  padding-left: 4px;
+  outline: none;
+}
+
+.btnCreateWrapper button {
+  border: none;
+  background-color: #d8d8d8;
+  font-weight: bold;
+  padding: 8px 12px 8px 12px;
+  font-size: 20em;
+  color: #34495e;
+  cursor: pointer;
+  text-decoration: none;
+  border-radius: 5px;
+  margin-right: 15px;
+  outline: none;
+}
+
+.btnCreateWrapper .linkHome {
+  font-size: 13px;
+  color: #000;
+}
+
+.statusWrapper {
+  font-size: 12px;
+}
+
+.statusWrapper input:nth-child(3),
+.statusWrapper input:last-child {
+  margin-left: 10px;
+}
