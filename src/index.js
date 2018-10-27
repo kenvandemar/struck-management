@@ -24,7 +24,7 @@ ReactDOM.render(
         <Route path="/edit/:id" component={EditTruck} />
         <Route path="/create" component={CreateTruck} />
         <Route path="/show/:id" component={ShowTruck} />
-        <Route path="/auth" component={Login} />
+        <Route path="/auth/login" component={Login} />
       </div>
     </Router>
   </Provider>,
