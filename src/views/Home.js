@@ -3,6 +3,8 @@ import { startApp } from '../actions/app.action';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
+import '../styles/home/styles.home.css';
+
 class Home extends Component {
   constructor(props) {
     super(props);
