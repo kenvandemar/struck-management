@@ -1,3 +1,4 @@
+import axios from 'axios';
 import Constant from '../Config/constant';
 
 const URL_HOST_API_ENDPOINT = Constant.host.url + '/trucks';
@@ -26,8 +27,6 @@ const fetchData = (url, options = {}) => {
       return response.json();
     })
     .then(responseJson => {
-      console.log(responseJson);
-
       if (!responseJson) {
         throw new Error('error: no response data');
       }
@@ -44,6 +43,50 @@ const fetchAllTrucks = _ => {
   return fetchData(`${URL_HOST_API_ENDPOINT}`);
 };
 
+// CREATE A TRUCK
+const createTruck = (
+  truckPlate,
+  cargoType,
+  driver,
+  truckType,
+  price,
+  dimension,
+  parkingAddress,
+  productionYear,
+  status,
+  description,
+  publishedAt,
+  updatedAt
+) => {
+  return axios.post(`${URL_HOST_API_ENDPOINT}`, {
+    truckPlate,
+    cargoType,
+    driver,
+    truckType,
+    price,
+    dimension,
+    parkingAddress,
+    productionYear,
+    status,
+    description,
+    publishedAt,
+    updatedAt
+  });
+};
+
+// DELETE A TRUCK
+const deleteTruck = id => {
+  return axios.delete(URL_HOST_API_ENDPOINT + '/' + id);
+};
+
+// FETCH SINGLE TRUCK
+const fetchSingeTruck = id => {
+  return axios.get(URL_HOST_API_ENDPOINT + '/' + id);
+};
+
 export default {
-  fetchAllTrucks
+  fetchAllTrucks,
+  createTruck,
+  deleteTruck,
+  fetchSingeTruck
 };

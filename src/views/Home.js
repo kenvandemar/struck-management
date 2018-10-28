@@ -5,9 +5,17 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
+import {
+  faPlusCircle,
+  faEdit,
+  faTrash
+} from '@fortawesome/free-solid-svg-icons';
 
-import { fetchAllTrucks } from '../modules/truckManagement.module';
+import {
+  fetchAllTrucks,
+  deleteTruck,
+  fetchSingleTruck
+} from '../modules/truckManagement.module';
 
 import Header from '../components/Header';
 
@@ -31,14 +39,14 @@ class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      trucks: null
+      trucks: null,
+      isShowModal: false
     };
   }
   componentDidMount() {
     this.props.fetchAllTrucks();
   }
   UNSAFE_componentWillReceiveProps(nextProps) {
-    console.log('HIHI', nextProps.truck.toJS());
     if (nextProps.truck.toJS().trucks.length) {
       this.setState({
         trucks: nextProps.truck.toJS().trucks
@@ -50,6 +58,7 @@ class Home extends Component {
     return (
       <tbody>
         <tr className="tblHeadingRow">
+          <th />
           {tableHeader.data.map((item, index) => {
             return <th key={index}>{item}</th>;
           })}
@@ -61,7 +70,6 @@ class Home extends Component {
     console.log('CHECK STATE', this.state.trucks);
   }
   render() {
-    console.log('CHECK PROPS', this.props.truck.toJS());
     const { isRequestTruck } = this.props.truck.toJS();
     if (!isRequestTruck) {
       return (
@@ -100,24 +108,42 @@ class Home extends Component {
           {/* Truck data */}
           <table className="tableContainer">
             {this._renderTableHeader()}
-
             <tbody>
-              {this.state.trucks.map((item, index) => {
-                return (
-                  <tr className="tblDataWrapper" key={index}>
-                    <td>{item.truckPlate}</td>
-                    <td>{item.cargoType}</td>
-                    <td>{item.driver}</td>
-                    <td>{item.truckType}</td>
-                    <td>{item.price}</td>
-                    <td>{item.dimension}</td>
-                    <td>{item.parkingAddress}</td>
-                    <td>{item.productionYear}</td>
-                    <td>{item.status}</td>
-                    <td>{item.description}</td>
-                  </tr>
-                );
-              })}
+              {this.state.trucks !== null
+                ? this.state.trucks.map((item, index) => {
+                    return (
+                      <tr className="tblDataWrapper" key={index}>
+                        <td>
+                          <Link to="/edit" className="linkCreate">
+                            <FontAwesomeIcon
+                              icon={faEdit}
+                              className="faEdit"
+                              onClick={() =>
+                                this.props.fetchSingleTruck(item._id)
+                              }
+                            />
+                          </Link>
+
+                          <FontAwesomeIcon
+                            icon={faTrash}
+                            className="faTrash"
+                            onClick={() => this.props.deleteTruck(item._id)}
+                          />
+                        </td>
+                        <td>{item.truckPlate}</td>
+                        <td>{item.cargoType}</td>
+                        <td>{item.driver}</td>
+                        <td>{item.truckType}</td>
+                        <td>{item.price}</td>
+                        <td>{item.dimension}</td>
+                        <td>{item.parkingAddress}</td>
+                        <td>{item.productionYear}</td>
+                        <td>{item.status}</td>
+                        <td>{item.description}</td>
+                      </tr>
+                    );
+                  })
+                : null}
             </tbody>
           </table>
 
@@ -150,7 +176,9 @@ const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
       startApp,
-      fetchAllTrucks
+      fetchAllTrucks,
+      deleteTruck,
+      fetchSingleTruck
     },
     dispatch
   );

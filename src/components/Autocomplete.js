@@ -18,8 +18,25 @@ class Autocomplete extends Component {
       activeSuggestion: 0,
       filteredSuggestions: [],
       showSuggestions: false,
-      userInput: ''
+      userInput: '',
+      chooseText: false
     };
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      this.state.userInput !== prevState.userInput &&
+      this.state.chooseText !== prevState.chooseText
+    ) {
+      var handleCargoUpdate = this.props.handleToUpdate;
+      var handleDriveUpdate = this.props.handleDriveUpdate;
+      if (this.props.name === 'cargoType') {
+        handleCargoUpdate(this.state.userInput);
+      }
+      if (this.props.name === 'driver') {
+        handleDriveUpdate(this.state.userInput);
+      }
+    }
   }
 
   onChange = e => {
@@ -34,7 +51,8 @@ class Autocomplete extends Component {
       activeSuggestion: 0,
       filteredSuggestions,
       showSuggestions: true,
-      userInput: e.currentTarget.value
+      userInput: e.currentTarget.value,
+      chooseText: false
     });
   };
 
@@ -43,7 +61,8 @@ class Autocomplete extends Component {
       activeSuggestion: 0,
       filteredSuggestions: [],
       showSuggestions: false,
-      userInput: e.currentTarget.innerText
+      userInput: e.currentTarget.innerText,
+      chooseText: true
     });
   };
 
@@ -79,7 +98,8 @@ class Autocomplete extends Component {
         activeSuggestion,
         filteredSuggestions,
         showSuggestions,
-        userInput
+        userInput,
+        chooseText
       }
     } = this;
 
@@ -88,7 +108,7 @@ class Autocomplete extends Component {
     if (showSuggestions && userInput) {
       if (filteredSuggestions.length) {
         suggestionsListComponent = (
-          <ul class="suggestions">
+          <ul className="suggestions">
             {filteredSuggestions.map((suggestion, index) => {
               let className;
 
@@ -106,7 +126,7 @@ class Autocomplete extends Component {
         );
       } else {
         suggestionsListComponent = (
-          <div class="no-suggestions">
+          <div className="no-suggestions">
             <em>Not exist!</em>
           </div>
         );

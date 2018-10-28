@@ -11,7 +11,7 @@ var TruckSchema = new mongoose.Schema({
     productionYear: String,
     status: String,
     description: String,
-    publishedAt: { type: Date },
+    publishedAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
 })
 

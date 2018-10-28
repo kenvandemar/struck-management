@@ -146,3 +146,15 @@
   font-size: 12px;
   margin-right: 10px;
 }
+
+.faEdit {
+  margin-right: 5px;
+  color: green;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.faTrash {
+  color: firebrick;
+  cursor: pointer;
+}

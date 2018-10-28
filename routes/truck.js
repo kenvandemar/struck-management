@@ -12,7 +12,7 @@ router.get('/trucks', function(req, res, next) {
 })
 
 // GET SINGLE TRUCK BY ID
-router.get('/:id', function(req, res, next) {
+router.get('/trucks/:id', function(req, res, next) {
     Truck.findById(req.params.id, function(err, truck) {
         if (err) return next(err)
         res.json(truck)
@@ -20,7 +20,7 @@ router.get('/:id', function(req, res, next) {
 })
 
 // SAVE TRUCK
-router.post('/', function(req, res, next) {
+router.post('/trucks', function(req, res, next) {
     Truck.create(req.body, function(err, truck) {
         if (err) return next (err)
         res.json(truck)
@@ -28,7 +28,7 @@ router.post('/', function(req, res, next) {
 })
 
 // UPDATE BOOK
-router.put('/:id', function(req, res, next) {
+router.put('/trucks/:id', function(req, res, next) {
     Truck.findByIdAndUpdate(req.params.id, req.body, function(err, truck) {
         if (err) return next(err)
         res.json(truck)
@@ -36,7 +36,7 @@ router.put('/:id', function(req, res, next) {
 })
 
 // DELETE BOOK
-router.delete('/:id', function(req, res, next) {
+router.delete('/trucks/:id', function(req, res, next) {
     Truck.findByIdAndRemove(req.params.id, req.body, function(err, truck) {
         if (err) return next(err)
         res.json(truck)
