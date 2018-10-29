@@ -8,7 +8,7 @@ var TruckSchema = new mongoose.Schema({
     price: Number,
     dimension: String,
     parkingAddress: String,
-    productionYear: String,
+    productionYear: Number,
     status: String,
     description: String,
     publishedAt: { type: Date, default: Date.now },

@@ -17,21 +17,60 @@ class CreateTruck extends Component {
       truckPlate: '',
       cargoType: '',
       driver: '',
-      truckType: '',
+      truckType: 0,
       price: 0,
       dimension: '',
       parkingAddress: '',
-      productionYear: '',
+      productionYear: 0,
       status: '',
       description: '',
       publishedAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+      char_textArea_length: 0,
+      char_park_length: 0,
+      isLicenseCorrect: false,
+      plateLength: 0,
+      isSubmit: false
     };
   }
+
   _onChange = e => {
+    // We assume our license plate follow format 30A-12345
+    const patt = /\d\d[A-Z]\-\b\d{5}\b/g;
+
     const state = this.state;
-    state[e.target.name] = e.target.value;
+    let targetName = e.target.name;
+
+    let charLength = e.target.value.length;
+    state[targetName] = e.target.value;
     this.setState(state);
+
+    if (targetName === 'truckPlate') {
+      let isCorrectPatt = patt.test(e.target.value);
+      this.setState({
+        plateLength: charLength
+      });
+      if (isCorrectPatt) {
+        this.setState({ isLicenseCorrect: true });
+      } else {
+        this.setState({ isLicenseCorrect: false });
+      }
+    }
+
+    if (targetName === 'description') {
+      if (charLength <= 200) {
+        this.setState({
+          char_textArea_length: charLength
+        });
+      }
+    }
+    if (e.target.name === 'parkingAddress') {
+      if (charLength <= 500) {
+        this.setState({
+          char_park_length: charLength
+        });
+      }
+    }
   };
 
   _onSubmit = e => {
@@ -60,6 +99,19 @@ class CreateTruck extends Component {
       status,
       description
     );
+    this.setState({
+      truckPlate: '',
+      cargoType: '',
+      driver: '',
+      truckType: '',
+      price: 0,
+      dimension: '',
+      parkingAddress: '',
+      productionYear: '',
+      status: '',
+      description: '',
+      isSubmit: true
+    });
   };
   _getCargoType(value) {
     this.setState({
@@ -72,9 +124,20 @@ class CreateTruck extends Component {
       driver: value
     });
   }
+  _warningPlateFormat() {
+    if (!this.state.isLicenseCorrect && this.state.plateLength) {
+      return (
+        <p style={{ fontSize: 10, color: 'red', fontStyle: 'italic' }}>
+          Wrong format
+        </p>
+      );
+    } else {
+      return null;
+    }
+  }
   // LEFT SIDE
   _renderLeftSide() {
-    const { truckPlate, truckType, price, dimension } = this.state;
+    const { truckPlate, truckType, price, dimension, isSubmit } = this.state;
     return (
       <div className="leftSideWrapper">
         {/* Truck plate */}
@@ -86,7 +149,9 @@ class CreateTruck extends Component {
             name="truckPlate"
             value={truckPlate}
             onChange={this._onChange}
+            placeholder={'30A-12345'}
           />
+          {this._warningPlateFormat()}
         </div>
 
         {/* Cargo Type*/}
@@ -98,6 +163,7 @@ class CreateTruck extends Component {
             type="text"
             name="cargoType"
             handleToUpdate={this._getCargoType.bind(this)}
+            isSubmitForm={isSubmit}
           />
         </div>
 
@@ -109,6 +175,7 @@ class CreateTruck extends Component {
             type="text"
             name="driver"
             handleDriveUpdate={this._getDrive.bind(this)}
+            isSubmitForm={isSubmit}
           />
         </div>
 
@@ -116,10 +183,11 @@ class CreateTruck extends Component {
         <div className="truckTypeWrapper">
           <p>Truck type</p>
           <input
-            type="text"
+            type="number"
             name="truckType"
             value={truckType}
             onChange={this._onChange}
+            min={0}
           />{' '}
           ton
         </div>
@@ -133,6 +201,7 @@ class CreateTruck extends Component {
             name="price"
             value={price}
             onChange={this._onChange}
+            min={0}
           />
         </div>
 
@@ -162,17 +231,22 @@ class CreateTruck extends Component {
             name="parkingAddress"
             value={parkingAddress}
             onChange={this._onChange}
+            maxLength={500}
           />
+          <p style={styles.countChar}>
+            {this.state.char_park_length + '/' + 500}
+          </p>
         </div>
 
         {/* Production year */}
         <div className="productionYear">
           <p>Production year</p>
           <input
-            type="text"
+            type="number"
             name="productionYear"
             value={productionYear}
             onChange={this._onChange}
+            min={0}
           />
         </div>
 
@@ -211,11 +285,28 @@ class CreateTruck extends Component {
             name="description"
             value={description}
             onChange={this._onChange}
+            disabled={false}
+            maxLength={200}
           />
+          <p style={styles.countChar}>
+            {this.state.char_textArea_length + '/' + 200}
+          </p>
         </div>
       </div>
     );
   }
+  _onKeydownForm = e => {
+    if (e.keyCode === 13) {
+      if (this.state.isLicenseCorrect) {
+        this.setState({
+          isSubmit: true
+        });
+        return;
+      } else {
+        return null;
+      }
+    }
+  };
 
   render() {
     return (
@@ -226,7 +317,11 @@ class CreateTruck extends Component {
           <h1>Add a new truck</h1>
         </div>
 
-        <form className="createBody" onSubmit={this._onSubmit}>
+        <form
+          className="createBody"
+          onSubmit={this._onSubmit}
+          onKeyDown={this._onKeydownForm}
+        >
           <div className="inputField">
             {/* LEFT SIDE */}
             {this._renderLeftSide()}
@@ -236,7 +331,11 @@ class CreateTruck extends Component {
 
           {/* Submit */}
           <div className="btnCreateWrapper">
-            <button className="submitCreate" type="submit">
+            <button
+              className="submitCreate"
+              type="submit"
+              disabled={this.state.isLicenseCorrect ? false : true}
+            >
               Submit
             </button>
             <Link to="/" className="linkHome">
@@ -251,7 +350,13 @@ class CreateTruck extends Component {
     );
   }
 }
-
+const styles = {
+  countChar: {
+    fontSize: 11,
+    fontStyle: 'italic',
+    color: 'mediumblue'
+  }
+};
 const mapStateToProps = state => ({
   truck: state.get('truck')
 });

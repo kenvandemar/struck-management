@@ -101,7 +101,7 @@ class Autocomplete extends Component {
         userInput
       }
     } = this;
-
+    const { isSubmitForm } = this.props;
     let suggestionsListComponent;
 
     if (showSuggestions && userInput) {
@@ -138,11 +138,7 @@ class Autocomplete extends Component {
           type="text"
           onChange={onChange}
           onKeyDown={onKeyDown}
-          value={
-            !this.state.isActivateInput && this.props.value
-              ? this.props.value
-              : userInput
-          }
+          value={isSubmitForm !== undefined && isSubmitForm ? '' : userInput}
           required={this.props.required}
           onFocus={() => this.setState({ isActivateInput: true })}
         />

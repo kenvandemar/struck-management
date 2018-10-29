@@ -15,19 +15,7 @@ class EditTruck extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      truck: {
-        truckPlate: '',
-        cargoType: '',
-        driver: '',
-        truckType: '',
-        price: 0,
-        dimension: '',
-        parkingAddress: '',
-        productionYear: '',
-        status: '',
-        description: '',
-        updatedAt: new Date()
-      }
+      truck: {}
     };
   }
 

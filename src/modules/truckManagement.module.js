@@ -1,6 +1,7 @@
 import { Record, List, Map } from 'immutable';
 import { handleActions, createAction } from 'redux-actions';
 import Api from '../utils/Api';
+import history from '../Config/history';
 
 const FETCH_TRUCKS_REQUEST = 'trucks/FETCH_TRUCKS_REQUEST';
 const fetchTruckRequest = createAction(FETCH_TRUCKS_REQUEST);
@@ -92,6 +93,7 @@ export const createTruck = (
       let truckArr = [];
       truckArr.push(result.data);
       dispatch(createTruckResponse(truckArr));
+      history.push('/');
     })
     .catch(err => dispatch(createTruckResponse(err)));
 };
@@ -197,8 +199,8 @@ const actions = {
     if (action.payload instanceof Error) {
       return state.set('isDeleteTruck', false);
     } else {
-      const newArray = state.trucks.toJS().filter(theItem => {
-        return theItem._id !== action.payload;
+      const newArray = state.get('trucks').filter(theItem => {
+        return theItem.toJS()._id !== action.payload;
       });
       return state.withMutations(s =>
         s.set('isDeleteTruck', false).set('trucks', newArray)

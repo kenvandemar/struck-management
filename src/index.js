@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { Router, Route } from 'react-router-dom';
 
 import './index.css';
 import App from './App';
@@ -15,10 +15,12 @@ import ShowTruck from './views/ShowTruck';
 import CreateTruck from './views/CreateTruck';
 import EditTruck from './views/EditTruck';
 
+import history from './Config/history';
+
 const store = createStore();
 ReactDOM.render(
   <Provider store={store}>
-    <Router>
+    <Router history={history}>
       <div>
         <Route exact path="/" component={Home} />
         <Route path="/edit" component={EditTruck} />
