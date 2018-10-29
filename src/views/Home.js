@@ -3,7 +3,6 @@ import { startApp } from '../actions/app.action';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faPlusCircle,
@@ -18,8 +17,11 @@ import {
 } from '../modules/truckManagement.module';
 
 import Header from '../components/Header';
+import Modal from '../components/Modal';
 
 import '../styles/home/styles.home.css';
+import '../styles/modal/styles.baseModal.css';
+import '../styles/deleteModal/styles.deleteModal.css';
 
 const tableHeader = {
   data: [
@@ -40,7 +42,8 @@ class Home extends Component {
     super(props);
     this.state = {
       trucks: null,
-      isShowModal: false
+      isShowModal: false,
+      truckId: null
     };
   }
   componentDidMount() {
@@ -66,9 +69,7 @@ class Home extends Component {
       </tbody>
     );
   }
-  _renderTableData() {
-    console.log('CHECK STATE', this.state.trucks);
-  }
+
   render() {
     const { isRequestTruck } = this.props.truck.toJS();
     if (!isRequestTruck) {
@@ -127,7 +128,10 @@ class Home extends Component {
                           <FontAwesomeIcon
                             icon={faTrash}
                             className="faTrash"
-                            onClick={() => this.props.deleteTruck(item._id)}
+                            onClick={() => {
+                              this.setState({ truckId: item._id });
+                              this.refDeleteTruck.open();
+                            }}
                           />
                         </td>
                         <td>{item.truckPlate}</td>
@@ -148,7 +152,7 @@ class Home extends Component {
           </table>
 
           {/* Add a new truck */}
-          <div className="createBtn" onClick={() => console.log()}>
+          <div className="createBtn">
             <Link to="/create" className="linkCreate">
               <FontAwesomeIcon icon={faPlusCircle} className="faPlusCircle" />
               Add a new truck
@@ -161,6 +165,30 @@ class Home extends Component {
             <p>1 2 3 4...</p>
             <p>Next</p>
           </div>
+          <Modal ref={ref => (this.refDeleteTruck = ref)}>
+            <div className="deleteModalContainer">
+              <p className="deleteQuestion">
+                Are you sure to delete this truck?
+              </p>
+              <div className="deleteAction">
+                <div
+                  className="deleteAction-deny"
+                  onClick={() => this.refDeleteTruck.close()}
+                >
+                  No
+                </div>
+                <div
+                  className="deleteAction-agree"
+                  onClick={() => {
+                    this.props.deleteTruck(this.state.truckId);
+                    this.refDeleteTruck.close();
+                  }}
+                >
+                  Yes
+                </div>
+              </div>
+            </div>
+          </Modal>
         </div>
       );
     }

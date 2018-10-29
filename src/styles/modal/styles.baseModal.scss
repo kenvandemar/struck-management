@@ -1,0 +1,124 @@
+#modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999999999;
+  
+    .overplay {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background: rgba(0, 0, 0, 0.3);
+    }
+  }
+  
+  .Modal {
+    max-width: 88%;
+    min-height: 250px;
+    z-index: 99999;
+    max-height: 94vh;
+  
+    .Modal-content {
+      flex: 1;
+      background-color: #fff;
+      padding: 0px 15px 0px 15px;
+      display: flex;
+      flex-direction: column;
+  
+      .Modal-content-header {
+        flex: 2;
+      }
+  
+      .Modal-content-body {
+        flex: 8;
+      }
+  
+      .Modal-content-footer {
+        flex: 2;
+      }
+  }
+    .Modal-shadow {
+      padding: 15px;
+      background-color: rgba(0, 0, 0, 0.3);
+      flex: 1;
+      position: relative;
+    }
+  
+    .Modal-close {
+      position: absolute;
+      right: -25px;
+      top: -25px;
+    }
+  
+    .Modal-header {
+      flex: 1;
+      align-self: flex-end;
+    }
+  
+    .Modal-close:hover,
+    .Modal-close:focus {
+      color: #000;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  }
+  
+  .modalShareMobile {
+    flex: 1 10;
+    min-width: 300px;
+    max-width: 56px;
+    min-height: 250px;
+    z-index: 99999;
+    .Modal-content {
+      flex: 1;
+      background-color: #fff;
+      padding: 0px 15px 0px 15px;
+      display: flex;
+      flex-direction: column;
+  
+      .Modal-content-header {
+        flex: 2;
+      }
+  
+      .Modal-content-body {
+        flex: 8;
+      }
+  
+      .Modal-content-footer {
+        flex: 2;
+      }
+  }
+    .Modal-shadow {
+      padding: 15px;
+      background-color: rgba(0, 0, 0, 0.3);
+      flex: 1;
+      position: relative;
+    }
+  
+    .Modal-close {
+      position: absolute;
+      right: -25px;
+      top: -25px;
+    }
+  
+    .Modal-header {
+      flex: 1;
+      align-self: flex-end;
+    }
+  
+    .Modal-close:hover,
+    .Modal-close:focus {
+      color: #000;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  }
+
+  

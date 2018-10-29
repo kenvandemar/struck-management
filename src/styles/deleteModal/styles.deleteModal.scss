@@ -1,0 +1,43 @@
+.deleteModalContainer {
+    height: 130px;
+    margin: 0;
+}
+
+.deleteQuestion {
+    text-align: center;
+    padding-top: 25px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin: 0px;
+}
+
+@mixin actionBtnStyle() {
+    padding: 5px 15px 5px 15px;
+    font-size: 1.3rem;
+    margin: 0px;
+    //margin-right: 30px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+
+.deleteAction {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding-top: 20px;
+    color: #fff;
+    margin: 0px;
+    //margin-left: 40px;
+    //transform: translate(4%,- 10%);
+    .deleteAction-deny {
+        background-color: rgb(194, 72, 47);
+        @include actionBtnStyle();
+    }
+    .deleteAction-agree {
+        background-color: rgb(40, 138, 211);
+        @include actionBtnStyle();
+        margin-left: 20px !important;
+    }
+}
+
+

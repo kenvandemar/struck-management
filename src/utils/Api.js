@@ -76,17 +76,48 @@ const createTruck = (
 
 // DELETE A TRUCK
 const deleteTruck = id => {
-  return axios.delete(URL_HOST_API_ENDPOINT + '/' + id);
+  return axios.delete(`${URL_HOST_API_ENDPOINT}/${id}`);
 };
 
 // FETCH SINGLE TRUCK
 const fetchSingeTruck = id => {
-  return axios.get(URL_HOST_API_ENDPOINT + '/' + id);
+  return axios.get(`${URL_HOST_API_ENDPOINT}/${id}`);
+};
+
+// UPDATE SINGLE TRUCK
+const updateSingleTruck = (
+  id,
+  truckPlate,
+  cargoType,
+  driver,
+  truckType,
+  price,
+  dimension,
+  parkingAddress,
+  productionYear,
+  status,
+  description,
+  updatedAt
+) => {
+  return axios.put(`${URL_HOST_API_ENDPOINT}/${id}`, {
+    truckPlate,
+    cargoType,
+    driver,
+    truckType,
+    price,
+    dimension,
+    parkingAddress,
+    productionYear,
+    status,
+    description,
+    updatedAt
+  });
 };
 
 export default {
   fetchAllTrucks,
   createTruck,
   deleteTruck,
-  fetchSingeTruck
+  fetchSingeTruck,
+  updateSingleTruck
 };

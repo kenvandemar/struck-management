@@ -98,8 +98,7 @@ class Autocomplete extends Component {
         activeSuggestion,
         filteredSuggestions,
         showSuggestions,
-        userInput,
-        chooseText
+        userInput
       }
     } = this;
 
@@ -139,8 +138,13 @@ class Autocomplete extends Component {
           type="text"
           onChange={onChange}
           onKeyDown={onKeyDown}
-          value={userInput}
+          value={
+            !this.state.isActivateInput && this.props.value
+              ? this.props.value
+              : userInput
+          }
           required={this.props.required}
+          onFocus={() => this.setState({ isActivateInput: true })}
         />
         {suggestionsListComponent}
       </Fragment>

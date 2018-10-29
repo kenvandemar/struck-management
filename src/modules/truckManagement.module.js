@@ -1,4 +1,4 @@
-import { Record, List } from 'immutable';
+import { Record, List, Map } from 'immutable';
 import { handleActions, createAction } from 'redux-actions';
 import Api from '../utils/Api';
 
@@ -34,7 +34,7 @@ const truckRecord = new Record({
   isEditTruck: true,
   isFetchSingleTruck: true,
   trucks: List(),
-  singleTruck: List(),
+  singleTruck: Map(),
   page: 1
 });
 
@@ -119,11 +119,50 @@ export const fetchSingleTruck = id => dispatch => {
   dispatch(fetchSingTruckRequest());
   Api.fetchSingeTruck(id)
     .then(response => {
-      let truckArr = [];
-      truckArr.push(response.data);
-      dispatch(fetchSingleTruckResponse(truckArr));
+      dispatch(fetchSingleTruckResponse(response.data));
     })
     .catch(err => dispatch(fetchSingleTruckResponse(err)));
+};
+
+/**
+|--------------------------------------------------
+| EDIT A TRUCK
+|--------------------------------------------------
+*/
+export const editTruck = (
+  id,
+  truckPlate,
+  cargoType,
+  driver,
+  truckType,
+  price,
+  dimension,
+  parkingAddress,
+  productionYear,
+  status,
+  description,
+  updatedAt
+) => dispatch => {
+  dispatch(editTruckRequest());
+  Api.updateSingleTruck(
+    id,
+    truckPlate,
+    cargoType,
+    driver,
+    truckType,
+    price,
+    dimension,
+    parkingAddress,
+    productionYear,
+    status,
+    description,
+    updatedAt
+  )
+    .then(response => {
+      console.log('CHECK UPDATE TRUCK', response);
+      dispatch(editTruckResponse(response));
+    })
+    .catch(err => dispatch(editTruckResponse(err)));
 };
 
 const actions = {
@@ -175,6 +214,13 @@ const actions = {
           .set('isFetchSingleTruck', false)
           .set('singleTruck', state.singleTruck.merge(action.payload))
       );
+    }
+  },
+  [EDIT_TRUCK_RESPONSE]: (state, action) => {
+    if (action.payload instanceof Error) {
+      return state.set('isEditTruck', false);
+    } else {
+      return state.withMutations(s => s.set('isEditTruck', false));
     }
   }
 };

@@ -21,7 +21,7 @@ ReactDOM.render(
     <Router>
       <div>
         <Route exact path="/" component={Home} />
-        <Route path="/edit/:id" component={EditTruck} />
+        <Route path="/edit" component={EditTruck} />
         <Route path="/create" component={CreateTruck} />
         <Route path="/show/:id" component={ShowTruck} />
         <Route path="/auth/login" component={Login} />

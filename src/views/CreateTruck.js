@@ -8,42 +8,7 @@ import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import '../styles/create/styles.create.css';
 import Autocomplete from '../components/Autocomplete';
 import { createTruck } from '../modules/truckManagement.module';
-
-const cargoList = [
-  'Computer, Electronic',
-  'Vegetable',
-  'Kid toys, Computer',
-  'Steel',
-  'Coffee, tea',
-  'Headphone',
-  'Smartphone',
-  'Clothes',
-  'Liquid',
-  'Milk'
-];
-const driverList = [
-  'Thomas Simson',
-  'Newton',
-  'Beethoven',
-  'Einstein',
-  'Donal Trump',
-  'Obama',
-  'Harry Porter',
-  'Bin Clinton',
-  'Hillary Rodham Clinton',
-  'Super man',
-  'Washington',
-  'Richard Nixon',
-  'J.Kenedy',
-  'Abraham Lincoln',
-  'Lucky Luke',
-  'Michael Jackson',
-  'Gerald Ford',
-  'Honda',
-  'Suzuki',
-  'Toyota',
-  'David Beckham'
-];
+import MockList from '../MockList';
 
 class CreateTruck extends Component {
   constructor(props) {
@@ -129,7 +94,7 @@ class CreateTruck extends Component {
           <p>Cargo type *</p>
           <Autocomplete
             required
-            suggestions={cargoList}
+            suggestions={MockList.cargoList}
             type="text"
             name="cargoType"
             handleToUpdate={this._getCargoType.bind(this)}
@@ -140,7 +105,7 @@ class CreateTruck extends Component {
         <div>
           <p>Driver</p>
           <Autocomplete
-            suggestions={driverList}
+            suggestions={MockList.driverList}
             type="text"
             name="driver"
             handleDriveUpdate={this._getDrive.bind(this)}
@@ -186,7 +151,7 @@ class CreateTruck extends Component {
   }
   // RIGHT SIDE
   _renderRightSide() {
-    const { parkingAddress, productionYear, status, description } = this.state;
+    const { parkingAddress, productionYear, description } = this.state;
     return (
       <div className="rightSideWrapper">
         {/* Parking Address */}
