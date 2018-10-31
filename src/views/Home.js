@@ -13,7 +13,8 @@ import {
 import {
   fetchAllTrucks,
   deleteTruck,
-  fetchSingleTruck
+  fetchSingleTruck,
+  searchTruck
 } from '../modules/truckManagement.module';
 
 import Header from '../components/Header';
@@ -41,9 +42,12 @@ class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      trucks: null,
+      trucks: [],
       isShowModal: false,
-      truckId: null
+      truckId: null,
+      searchText: '',
+      emptySearch: false,
+      foundSearch: false
     };
   }
   componentDidMount() {
@@ -54,6 +58,20 @@ class Home extends Component {
       this.setState({
         trucks: nextProps.truck.toJS().trucks
       });
+    } else {
+      this.setState({
+        trucks: []
+      });
+    }
+    if (nextProps.truck.toJS().emptySearch) {
+      this.setState({ emptySearch: true });
+    } else {
+      this.setState({ emptySearch: false });
+    }
+    if (nextProps.truck.toJS().foundSearch) {
+      this.setState({ foundSearch: true });
+    } else {
+      this.setState({ foundSearch: false });
     }
   }
 
@@ -70,8 +88,41 @@ class Home extends Component {
     );
   }
 
+  _onChange = e => {
+    let value = e.target.value;
+    this.setState({
+      searchText: value
+    });
+    if (
+      (!value.length && this.state.emptySearch) ||
+      (!value.length && this.state.foundSearch)
+    ) {
+      this.props.fetchAllTrucks();
+    }
+  };
+  _onSearchTruck = e => {
+    e.preventDefault();
+    const { searchText } = this.state;
+    if (searchText.length > 0) {
+      this.props.searchTruck(searchText);
+    } else {
+      this.props.fetchAllTrucks();
+    }
+  };
+
+  _renderEmptySearch() {
+    const { emptySearch } = this.state;
+    if (emptySearch) {
+      return (
+        <p className="notFound">Not found any trucks! Please try again!</p>
+      );
+    }
+    return null;
+  }
+
   render() {
     const { isRequestTruck } = this.props.truck.toJS();
+    const { trucks } = this.state;
     if (!isRequestTruck) {
       return (
         <div className="homeContainer">
@@ -80,8 +131,14 @@ class Home extends Component {
           {/* SEARCH FIELD */}
           <div className="searchContainer">
             {/* Search input */}
-
-            <input className="searchInput" placeholder={'Search'} />
+            <form onSubmit={this._onSearchTruck} className="searchForm">
+              <input
+                className="searchInput"
+                name="search"
+                placeholder={'Search'}
+                onChange={this._onChange}
+              />
+            </form>
 
             {/* Filter */}
             <div className="filterContainer">
@@ -110,7 +167,7 @@ class Home extends Component {
           <table className="tableContainer">
             {this._renderTableHeader()}
             <tbody>
-              {this.state.trucks !== null
+              {trucks.length && trucks !== null
                 ? this.state.trucks.map((item, index) => {
                     return (
                       <tr className="tblDataWrapper" key={index}>
@@ -150,6 +207,7 @@ class Home extends Component {
                 : null}
             </tbody>
           </table>
+          {this._renderEmptySearch()}
 
           {/* Add a new truck */}
           <div className="createBtn">
@@ -206,7 +264,8 @@ const mapDispatchToProps = dispatch => {
       startApp,
       fetchAllTrucks,
       deleteTruck,
-      fetchSingleTruck
+      fetchSingleTruck,
+      searchTruck
     },
     dispatch
   );

@@ -138,7 +138,13 @@ class Autocomplete extends Component {
           type="text"
           onChange={onChange}
           onKeyDown={onKeyDown}
-          value={isSubmitForm !== undefined && isSubmitForm ? '' : userInput}
+          value={
+            isSubmitForm !== undefined && isSubmitForm
+              ? ''
+              : this.props.value
+                ? this.props.value
+                : userInput
+          }
           required={this.props.required}
           onFocus={() => this.setState({ isActivateInput: true })}
         />

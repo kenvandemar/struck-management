@@ -9,6 +9,7 @@ import '../styles/create/styles.create.css';
 import Autocomplete from '../components/Autocomplete';
 import { createTruck } from '../modules/truckManagement.module';
 import MockList from '../MockList';
+import Helper from '../helper/helper';
 
 class CreateTruck extends Component {
   constructor(props) {
@@ -18,7 +19,7 @@ class CreateTruck extends Component {
       cargoType: '',
       driver: '',
       truckType: 0,
-      price: 0,
+      price: '',
       dimension: '',
       parkingAddress: '',
       productionYear: 0,
@@ -58,14 +59,14 @@ class CreateTruck extends Component {
     }
 
     if (targetName === 'description') {
-      if (charLength <= 200) {
+      if (charLength <= 500) {
         this.setState({
           char_textArea_length: charLength
         });
       }
     }
-    if (e.target.name === 'parkingAddress') {
-      if (charLength <= 500) {
+    if (targetName === 'parkingAddress') {
+      if (charLength <= 200) {
         this.setState({
           char_park_length: charLength
         });
@@ -138,6 +139,7 @@ class CreateTruck extends Component {
   // LEFT SIDE
   _renderLeftSide() {
     const { truckPlate, truckType, price, dimension, isSubmit } = this.state;
+
     return (
       <div className="leftSideWrapper">
         {/* Truck plate */}
@@ -196,12 +198,11 @@ class CreateTruck extends Component {
         <div>
           <p>Price *</p>
           <input
+            type="text"
             required
-            type="number"
             name="price"
             value={price}
             onChange={this._onChange}
-            min={0}
           />
         </div>
 
@@ -231,10 +232,10 @@ class CreateTruck extends Component {
             name="parkingAddress"
             value={parkingAddress}
             onChange={this._onChange}
-            maxLength={500}
+            maxLength={200}
           />
           <p style={styles.countChar}>
-            {this.state.char_park_length + '/' + 500}
+            {this.state.char_park_length + '/' + 200}
           </p>
         </div>
 
@@ -286,10 +287,10 @@ class CreateTruck extends Component {
             value={description}
             onChange={this._onChange}
             disabled={false}
-            maxLength={200}
+            maxLength={500}
           />
           <p style={styles.countChar}>
-            {this.state.char_textArea_length + '/' + 200}
+            {this.state.char_textArea_length + '/' + 500}
           </p>
         </div>
       </div>

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Constant from '../Config/constant';
 
-const URL_HOST_API_ENDPOINT = Constant.host.url + '/trucks';
+const URL_HOST_API_ENDPOINT = Constant.host.url;
 
 export const E_API_AUTH_ERROR = 900001;
 export const E_API_404_ERROR = 900002;
@@ -40,7 +40,7 @@ const fetchData = (url, options = {}) => {
 };
 // FETCH ALL TRUCKS
 const fetchAllTrucks = _ => {
-  return fetchData(`${URL_HOST_API_ENDPOINT}`);
+  return fetchData(`${URL_HOST_API_ENDPOINT}/trucks`);
 };
 
 // CREATE A TRUCK
@@ -55,10 +55,9 @@ const createTruck = (
   productionYear,
   status,
   description,
-  publishedAt,
-  updatedAt
+  publishedAt
 ) => {
-  return axios.post(`${URL_HOST_API_ENDPOINT}`, {
+  return axios.post(`${URL_HOST_API_ENDPOINT}/trucks`, {
     truckPlate,
     cargoType,
     driver,
@@ -69,19 +68,23 @@ const createTruck = (
     productionYear,
     status,
     description,
-    publishedAt,
-    updatedAt
+    publishedAt
   });
 };
 
 // DELETE A TRUCK
 const deleteTruck = id => {
-  return axios.delete(`${URL_HOST_API_ENDPOINT}/${id}`);
+  return axios.delete(`${URL_HOST_API_ENDPOINT}/trucks/${id}`);
 };
 
 // FETCH SINGLE TRUCK
 const fetchSingeTruck = id => {
-  return axios.get(`${URL_HOST_API_ENDPOINT}/${id}`);
+  return axios.get(`${URL_HOST_API_ENDPOINT}/trucks/${id}`);
+};
+
+// Search
+const searchTruck = text => {
+  return axios.get(`${URL_HOST_API_ENDPOINT}/search?q=${text}`);
 };
 
 // UPDATE SINGLE TRUCK
@@ -96,10 +99,9 @@ const updateSingleTruck = (
   parkingAddress,
   productionYear,
   status,
-  description,
-  updatedAt
+  description
 ) => {
-  return axios.put(`${URL_HOST_API_ENDPOINT}/${id}`, {
+  return axios.put(`${URL_HOST_API_ENDPOINT}/trucks/${id}`, {
     truckPlate,
     cargoType,
     driver,
@@ -109,8 +111,7 @@ const updateSingleTruck = (
     parkingAddress,
     productionYear,
     status,
-    description,
-    updatedAt
+    description
   });
 };
 
@@ -119,5 +120,6 @@ export default {
   createTruck,
   deleteTruck,
   fetchSingeTruck,
-  updateSingleTruck
+  updateSingleTruck,
+  searchTruck
 };

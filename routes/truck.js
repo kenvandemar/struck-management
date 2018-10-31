@@ -43,4 +43,17 @@ router.delete('/trucks/:id', function(req, res, next) {
     })
 })
 
+
+router.get("/search", function(req, res, next){
+    var q = req.query.q
+        Truck.find({
+            $text: {
+                $search: new RegExp(q)
+            }
+        }, function(err, data) {
+            if (err) return next(err)
+            res.json(data)
+        }
+    )
+});
 module.exports = router

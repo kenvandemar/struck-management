@@ -28,14 +28,22 @@ const EDIT_TRUCK_RESPONSE = 'trucks/EDIT_TRUCK_RESPONSE';
 const editTruckRequest = createAction(EDIT_TRUCK_REQUEST);
 const editTruckResponse = createAction(EDIT_TRUCK_RESPONSE);
 
+const SEARCH_TRUCK_REQUEST = 'trucks/SEARCH_TRUCK_REQUEST';
+const SEARCH_TRUCK_RESPONSE = 'trucks/SEARCH_TRUCK_RESPONSE';
+const searchTruckRequest = createAction(SEARCH_TRUCK_REQUEST);
+const searchTruckResponse = createAction(SEARCH_TRUCK_RESPONSE);
+
 const truckRecord = new Record({
   isRequestTruck: true,
   isCreateTruck: true,
   isDeleteTruck: true,
   isEditTruck: true,
   isFetchSingleTruck: true,
+  isSearchTruck: true,
   trucks: List(),
   singleTruck: Map(),
+  emptySearch: false,
+  foundSearch: false,
   page: 1
 });
 
@@ -142,8 +150,7 @@ export const editTruck = (
   parkingAddress,
   productionYear,
   status,
-  description,
-  updatedAt
+  description
 ) => dispatch => {
   dispatch(editTruckRequest());
   Api.updateSingleTruck(
@@ -157,22 +164,63 @@ export const editTruck = (
     parkingAddress,
     productionYear,
     status,
-    description,
-    updatedAt
+    description
   )
     .then(response => {
-      console.log('CHECK UPDATE TRUCK', response);
       dispatch(editTruckResponse(response));
+      history.push('/');
     })
     .catch(err => dispatch(editTruckResponse(err)));
 };
 
+/**
+|--------------------------------------------------
+| SEARCH TRUCK
+|--------------------------------------------------
+*/
+export const searchTruck = text => dispatch => {
+  dispatch(searchTruckRequest());
+  Api.searchTruck(text)
+    .then(response => {
+      dispatch(searchTruckResponse(response.data));
+    })
+    .catch(err => dispatch(searchTruckResponse(err)));
+};
+
 const actions = {
-  [FETCH_TRUCKS_REQUEST]: state => state.set('isRequestTruck', true),
-  [CREATE_TRUCK_RESPONSE]: state => state.set('isCreateTruck', true),
-  [DELETE_TRUCK_REQUEST]: state => state.set('isDeleteTruck', true),
-  [EDIT_TRUCK_REQUEST]: state => state.set('isEditTruck', true),
-  [FETCH_SINGLE_TRUCK_REQUEST]: state => state.set('isFetchSingleTruck', true),
+  [FETCH_TRUCKS_REQUEST]: state => {
+    return state.withMutations(s =>
+      s.set('isRequestTruck', true).set('trucks', List())
+    );
+  },
+  [CREATE_TRUCK_RESPONSE]: state => {
+    return state.withMutations(s =>
+      s.set('isCreateTruck', true).set('trucks', List())
+    );
+  },
+  [DELETE_TRUCK_REQUEST]: state => {
+    return state.withMutations(s =>
+      s.set('isDeleteTruck', true).set('trucks', List())
+    );
+  },
+  [EDIT_TRUCK_REQUEST]: state => {
+    return state.withMutations(s =>
+      s.set('isEditTruck', true).set('trucks', List())
+    );
+  },
+  [FETCH_SINGLE_TRUCK_REQUEST]: state => {
+    return state.withMutations(s =>
+      s.set('isFetchSingleTruck', true).set('trucks', List())
+    );
+  },
+  [SEARCH_TRUCK_REQUEST]: state => {
+    return state.withMutations(s =>
+      s
+        .set('isSearchTruck', true)
+        .set('emptySearch', false)
+        .set('foundSearch', false)
+    );
+  },
   [FETCH_TRUCKS_RESPONSE]: (state, action) => {
     if (action.payload instanceof Error) {
       return state.set('isRequestTruck', false);
@@ -223,6 +271,27 @@ const actions = {
       return state.set('isEditTruck', false);
     } else {
       return state.withMutations(s => s.set('isEditTruck', false));
+    }
+  },
+  [SEARCH_TRUCK_RESPONSE]: (state, action) => {
+    if (action.payload instanceof Error) {
+      return state.set('isFetchSingleTruck', false);
+    } else {
+      if (action.payload.length) {
+        return state.withMutations(s =>
+          s
+            .set('isFetchSingleTruck', false)
+            .set('trucks', action.payload)
+            .set('foundSearch', true)
+        );
+      } else {
+        return state.withMutations(s =>
+          s
+            .set('isFetchSingleTruck', false)
+            .set('trucks', action.payload)
+            .set('emptySearch', true)
+        );
+      }
     }
   }
 };
