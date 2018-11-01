@@ -23,7 +23,7 @@ class CreateTruck extends Component {
       dimension: '',
       parkingAddress: '',
       productionYear: 0,
-      status: '',
+      status: 'New',
       description: '',
       publishedAt: new Date(),
       updatedAt: new Date(),
@@ -129,7 +129,7 @@ class CreateTruck extends Component {
     if (!this.state.isLicenseCorrect && this.state.plateLength) {
       return (
         <p style={{ fontSize: 10, color: 'red', fontStyle: 'italic' }}>
-          Wrong format
+          Incorrect format
         </p>
       );
     } else {

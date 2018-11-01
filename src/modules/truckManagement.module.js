@@ -33,6 +33,13 @@ const SEARCH_TRUCK_RESPONSE = 'trucks/SEARCH_TRUCK_RESPONSE';
 const searchTruckRequest = createAction(SEARCH_TRUCK_REQUEST);
 const searchTruckResponse = createAction(SEARCH_TRUCK_RESPONSE);
 
+const FILTER_TRUCK_REQUEST = 'trucks/FILTER_STATUS_REQUEST';
+const FILTER_STATUS_RESPONSE = 'trucks/FILTER_TRUCK_REQUEST';
+const filterTruckRequest = createAction(FILTER_TRUCK_REQUEST);
+const filterTruckResponse = createAction(FILTER_STATUS_RESPONSE);
+const FILTER_PRICE_RESPONSE = 'trucks/FILTER_PRICE_RESPONSE';
+const filterPriceResponse = 'trucks/FILTER_PRICE_RESPONSE';
+
 const truckRecord = new Record({
   isRequestTruck: true,
   isCreateTruck: true,
@@ -40,6 +47,7 @@ const truckRecord = new Record({
   isEditTruck: true,
   isFetchSingleTruck: true,
   isSearchTruck: true,
+  isFilterTruck: true,
   trucks: List(),
   singleTruck: Map(),
   emptySearch: false,
@@ -187,6 +195,38 @@ export const searchTruck = text => dispatch => {
     .catch(err => dispatch(searchTruckResponse(err)));
 };
 
+/**
+|--------------------------------------------------
+| FILTER TRUCK STATUS
+|--------------------------------------------------
+*/
+export const filterTruckStatus = status => dispatch => {
+  dispatch(filterTruckRequest());
+  Api.filterStatus(status)
+    .then(response => {
+      dispatch(filterTruckResponse(response.data));
+    })
+    .catch(err => dispatch(filterTruckResponse(err)));
+};
+
+/**
+|--------------------------------------------------
+| FILTER PRICE
+|--------------------------------------------------
+*/
+export const filterPrice = sortCondition => dispatch => {
+  dispatch(filterTruckRequest());
+  Api.filterPrice(sortCondition)
+    .then(response => {
+      dispatch(filterTruckResponse(response.data));
+    })
+    .catch(err => dispatch(filterTruckResponse(err)));
+};
+/**
+|--------------------------------------------------
+| HANDLE STATE
+|--------------------------------------------------
+*/
 const actions = {
   [FETCH_TRUCKS_REQUEST]: state => {
     return state.withMutations(s =>
@@ -220,6 +260,9 @@ const actions = {
         .set('emptySearch', false)
         .set('foundSearch', false)
     );
+  },
+  [FILTER_TRUCK_REQUEST]: state => {
+    return state.withMutations(s => s.set('isFilterTruck', true));
   },
   [FETCH_TRUCKS_RESPONSE]: (state, action) => {
     if (action.payload instanceof Error) {
@@ -280,18 +323,36 @@ const actions = {
       if (action.payload.length) {
         return state.withMutations(s =>
           s
-            .set('isFetchSingleTruck', false)
+            .set('isSearchTruck', false)
             .set('trucks', action.payload)
             .set('foundSearch', true)
         );
       } else {
         return state.withMutations(s =>
           s
-            .set('isFetchSingleTruck', false)
+            .set('isSearchTruck', false)
             .set('trucks', action.payload)
             .set('emptySearch', true)
         );
       }
+    }
+  },
+  [FILTER_STATUS_RESPONSE]: (state, action) => {
+    if (action.payload instanceof Error) {
+      return state.set('isFilterTruck', false);
+    } else {
+      return state.withMutations(s =>
+        s.set('isFilterTruck', false).set('trucks', action.payload)
+      );
+    }
+  },
+  [FILTER_PRICE_RESPONSE]: (state, action) => {
+    if (action.payload instanceof Error) {
+      return state.set('isFilterTruck', false);
+    } else {
+      return state.withMutations(s =>
+        s.set('isFilterTruck', false).set('trucks', action.payload)
+      );
     }
   }
 };

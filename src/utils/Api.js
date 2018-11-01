@@ -115,11 +115,25 @@ const updateSingleTruck = (
   });
 };
 
+// FILTER STATUS
+const filterStatus = status => {
+  return axios.get(`${URL_HOST_API_ENDPOINT}/search/filter?f=${status}`);
+};
+
+// SORT PRICE
+const filterPrice = sortCondition => {
+  return axios.get(
+    `${URL_HOST_API_ENDPOINT}/search/price?sort=${sortCondition}`
+  );
+};
+
 export default {
   fetchAllTrucks,
   createTruck,
   deleteTruck,
   fetchSingeTruck,
   updateSingleTruck,
-  searchTruck
+  searchTruck,
+  filterStatus,
+  filterPrice
 };

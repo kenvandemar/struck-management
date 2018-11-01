@@ -43,7 +43,7 @@ router.delete('/trucks/:id', function(req, res, next) {
     })
 })
 
-
+// SEARCH TRUCK
 router.get("/search", function(req, res, next){
     var q = req.query.q
         Truck.find({
@@ -56,4 +56,23 @@ router.get("/search", function(req, res, next){
         }
     )
 });
+
+// FILTER TRUCK ACCORDING STATUS
+router.get("/search/filter", function(req, res, next) {
+    var status = req.query.f
+    Truck.find({
+        status: new RegExp(status)
+    }, function(err, data) {
+        if (err) return next(err)
+        res.json(data)
+    })
+})
+
+// SORT PRICE
+router.get("/search/price", function(req, res, next) {
+    Truck.find({}).sort(req.query.sort).exec(function(err, listings) {
+        if (err) return next(err)
+        res.json(listings)
+    })
+})
 module.exports = router

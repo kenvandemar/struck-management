@@ -11,20 +11,26 @@ $black: #000;
 }
 .searchForm {
     width: 25%;
+    margin-right: 20px;
 }
 
 .searchInput {
-    width: 90%;
+    width: 100%;
     margin-right: 20px;
     padding-top: 5px;
     padding-bottom: 5px;
     padding-left: 10px;
     border: none;
-    border: 1px solid #979797;
+    //border: 1px solid #979797;
     border-radius: 3px;
     font-size: 14px;
     outline: none;
 }
+
+.searchInput::-webkit-search-cancel-button {
+    margin-right: 10px;
+}
+
 .filterContainer {
     display: flex;
     flex-direction: row;

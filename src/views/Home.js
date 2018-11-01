@@ -14,7 +14,9 @@ import {
   fetchAllTrucks,
   deleteTruck,
   fetchSingleTruck,
-  searchTruck
+  searchTruck,
+  filterTruckStatus,
+  filterPrice
 } from '../modules/truckManagement.module';
 
 import Header from '../components/Header';
@@ -47,7 +49,10 @@ class Home extends Component {
       truckId: null,
       searchText: '',
       emptySearch: false,
-      foundSearch: false
+      foundSearch: false,
+      items: [],
+      focused: false,
+      input: ''
     };
   }
   componentDidMount() {
@@ -103,11 +108,10 @@ class Home extends Component {
   _onSearchTruck = e => {
     e.preventDefault();
     const { searchText } = this.state;
-    if (searchText.length > 0) {
-      this.props.searchTruck(searchText);
-    } else {
-      this.props.fetchAllTrucks();
-    }
+    this.props.searchTruck(searchText);
+    this.setState({
+      searchText: ''
+    });
   };
 
   _renderEmptySearch() {
@@ -119,6 +123,50 @@ class Home extends Component {
     }
     return null;
   }
+
+  _onHandleOption = e => {
+    this.props.filterTruckStatus(e.target.value);
+    this.setState({
+      items: [...this.state.items, e.target.value]
+    });
+  };
+
+  _onHandleKeyDown = e => {
+    if (e.keyCode === 13) {
+      const { value } = e.target;
+      this.setState(state => ({
+        items: [...state.items, value]
+      }));
+    }
+    if (
+      this.state.items.length &&
+      e.keyCode === 8 &&
+      !this.state.searchText.length
+    ) {
+      this.setState(state => ({
+        searchText: state.items.slice(0, state.items.length - 1)
+      }));
+    }
+  };
+
+  _onRemoveTag(index) {
+    this.setState(state => ({
+      items: state.items.filter((item, i) => i !== index)
+    }));
+    if (this.state.items.length === 1) {
+      this.props.fetchAllTrucks();
+    }
+  }
+
+  _onFilterPrice = e => {
+    const { value } = e.target;
+    if (value === 'high') {
+      this.props.filterPrice('-price');
+    }
+    if (value === 'low') {
+      this.props.filterPrice('price');
+    }
+  };
 
   render() {
     const { isRequestTruck } = this.props.truck.toJS();
@@ -132,29 +180,45 @@ class Home extends Component {
           <div className="searchContainer">
             {/* Search input */}
             <form onSubmit={this._onSearchTruck} className="searchForm">
-              <input
-                className="searchInput"
-                name="search"
-                placeholder={'Search'}
-                onChange={this._onChange}
-              />
+              <ul style={styles.tagWrapper}>
+                {this.state.items.map((item, i) => {
+                  return (
+                    <li
+                      key={i}
+                      style={styles.tags}
+                      onClick={() => this._onRemoveTag(i)}
+                    >
+                      {item} x
+                    </li>
+                  );
+                })}
+                <input
+                  className="searchInput"
+                  name="search"
+                  type="search"
+                  placeholder={'Search'}
+                  onChange={this._onChange}
+                  onKeyDown={this._onHandleKeyDown}
+                  value={this.state.searchText}
+                />
+              </ul>
             </form>
 
             {/* Filter */}
             <div className="filterContainer">
               {/* Status */}
               <div className="select">
-                <select name="slct" id="slct">
+                <select name="slct" id="slct" onChange={this._onHandleOption}>
                   <option>Choose Status</option>
-                  <option value="new">New</option>
-                  <option value="inUse">In-use</option>
-                  <option value="stop">Stopped</option>
+                  <option value="New">New</option>
+                  <option value="In-use">In-use</option>
+                  <option value="Stopped">Stopped</option>
                 </select>
               </div>
 
               {/* Price */}
               <div className="select">
-                <select name="slct" id="slct">
+                <select name="slct" id="slct" onChange={this._onFilterPrice}>
                   <option>Choose Price</option>
                   <option value="high">High to Low</option>
                   <option value="low">Low to High</option>
@@ -254,6 +318,31 @@ class Home extends Component {
   }
 }
 
+const styles = {
+  tagWrapper: {
+    border: '1px solid #ddd',
+    padding: '4px',
+    borderRadius: '5px'
+  },
+
+  tags: {
+    display: 'inline-block',
+    padding: '2px',
+    border: '1px solid #979797',
+    fontFamily: 'Helvetica, sans-serif',
+    borderRadius: '5px',
+    marginRight: '5px',
+    cursor: 'pointer'
+  },
+
+  input: {
+    outline: 'none',
+    border: 'none',
+    fontSize: '15px',
+    fontFamily: 'Helvetica, sans-serif'
+  }
+};
+
 const mapStateToProps = state => ({
   truck: state.get('truck')
 });
@@ -265,7 +354,9 @@ const mapDispatchToProps = dispatch => {
       fetchAllTrucks,
       deleteTruck,
       fetchSingleTruck,
-      searchTruck
+      searchTruck,
+      filterTruckStatus,
+      filterPrice
     },
     dispatch
   );
