@@ -1,15 +1,22 @@
 const MockList = {
   cargoList: [
-    'Computer, Electronic',
+    'Computer',
+    'Electronic',
     'Vegetable',
-    'Kid toys, Computer',
+    'Kid toys',
     'Steel',
     'Coffee, tea',
     'Headphone',
     'Smartphone',
     'Clothes',
     'Liquid',
-    'Milk'
+    'Milk',
+    'Seafood',
+    'Drug',
+    'Weed',
+    'Heroin',
+    'Ice-cream',
+    'Fresh Water'
   ],
   driverList: [
     'Thomas Simson',

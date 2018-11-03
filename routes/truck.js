@@ -7,15 +7,39 @@ var Truck = require('../models/Truck')
 router.get('/trucks', function(req, res, next) {
     Truck.find(function (err, trucks) {
         if (err) return next(err)
-        res.json(trucks)
+        return res.json(trucks)
     })
 })
 
+// PAGINITION
+router.get('/trucks/:page', function(req, res, next) {
+    var perPage = 10
+    var page = req.params.page || 1
+    Truck.find({})
+          .skip((perPage * page) - perPage)
+          .limit(perPage)
+          .exec(function(err, trucks) {
+            Truck.countDocuments().exec(function(err, count) {
+                if (err) return next(err)
+                return res.json({
+                    trucks,
+                    current: page,
+                    pages: Math.ceil(count / perPage)
+                })
+            })
+          })
+})
+
 // GET SINGLE TRUCK BY ID
-router.get('/trucks/:id', function(req, res, next) {
-    Truck.findById(req.params.id, function(err, truck) {
-        if (err) return next(err)
-        res.json(truck)
+router.get('/trucks/:page/:id', function(req, res, next) {
+    Truck.findById(req.params.id)
+    .exec(function (err, truck) {
+        if (err) {
+            console.error('Error retrieving all product by id!');
+        } else {
+            console.log('server product = ' + JSON.stringify(truck));
+            res.json(truck);
+        }
     })
 })
 
@@ -36,7 +60,7 @@ router.put('/trucks/:id', function(req, res, next) {
 })
 
 // DELETE BOOK
-router.delete('/trucks/:id', function(req, res, next) {
+router.delete('/trucks/:page/:id', function(req, res, next) {
     Truck.findByIdAndRemove(req.params.id, req.body, function(err, truck) {
         if (err) return next(err)
         res.json(truck)

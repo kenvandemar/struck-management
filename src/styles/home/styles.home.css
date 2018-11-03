@@ -1,3 +1,8 @@
+.homeContainer {
+  display: flex;
+  flex-direction: column;
+}
+
 .searchContainer {
   display: flex;
   flex-direction: row;
@@ -148,6 +153,7 @@
   flex-direction: row;
   margin-top: 80px;
   justify-content: center;
+  align-items: center;
 }
 
 .pagingContainer > p {
@@ -175,4 +181,31 @@
   text-align: center;
   font-size: 14px;
   color: red;
+}
+
+.disablePage {
+  display: flex;
+  margin-right: 10px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #979797;
+}
+
+.enablePage {
+  display: flex;
+  margin-right: 10px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #000;
+  cursor: pointer;
+}
+
+.activePage {
+  font-weight: bold;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.inActivePage {
+  cursor: pointer;
 }

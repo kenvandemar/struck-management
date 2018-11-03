@@ -10,6 +10,8 @@ import MockList from '../MockList';
 import Helper from '../helper/helper';
 
 import '../styles/create/styles.create.css';
+import Footer from '../components/Footer';
+import Header from '../components/Header';
 
 class EditTruck extends Component {
   constructor(props) {
@@ -19,11 +21,11 @@ class EditTruck extends Component {
       truckPlate: '',
       cargoType: '',
       driver: '',
-      truckType: 0,
+      truckType: '',
       price: '',
       dimension: '',
       parkingAddress: '',
-      productionYear: 0,
+      productionYear: '',
       status: '',
       description: '',
       publishedAt: new Date(),
@@ -37,29 +39,27 @@ class EditTruck extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    console.log('llllllll', nextProps.truck.singleTruck.toJS());
     let singgleTruckData = nextProps.truck.singleTruck.toJS();
-    this.setState({
-      truckPlate: singgleTruckData.truckPlate,
-      cargoType: singgleTruckData.cargoType,
-      driver: singgleTruckData.driver,
-      truckType: singgleTruckData.truckType,
-      price: singgleTruckData.price,
-      dimension: singgleTruckData.dimension,
-      parkingAddress: singgleTruckData.parkingAddress,
-      productionYear: singgleTruckData.productionYear,
-      status: singgleTruckData.status,
-      description: singgleTruckData.description,
-      publishedAt: singgleTruckData.publishedAt,
-      updatedAt: singgleTruckData.updatedAt,
-      _id: singgleTruckData._id
-    });
-
-    this.setState({
-      char_park_length: nextProps.truck.singleTruck.toJS().parkingAddress
-        .length,
-      char_textArea_length: nextProps.truck.singleTruck.toJS().description
-        .length
-    });
+    if (Object.keys(singgleTruckData).length) {
+      this.setState({
+        truckPlate: singgleTruckData.truckPlate,
+        cargoType: singgleTruckData.cargoType,
+        driver: singgleTruckData.driver,
+        truckType: singgleTruckData.truckType,
+        price: singgleTruckData.price,
+        dimension: singgleTruckData.dimension,
+        parkingAddress: singgleTruckData.parkingAddress,
+        productionYear: singgleTruckData.productionYear,
+        status: singgleTruckData.status,
+        description: singgleTruckData.description,
+        publishedAt: singgleTruckData.publishedAt,
+        updatedAt: singgleTruckData.updatedAt,
+        _id: singgleTruckData._id,
+        char_park_length: singgleTruckData.parkingAddress.length,
+        char_textArea_length: singgleTruckData.description.length
+      });
+    }
   }
 
   _onChange = e => {
@@ -98,8 +98,10 @@ class EditTruck extends Component {
     }
   };
   _getCargoType(value) {
+    let vl = value.slice();
+    vl = vl.join(', ').toString();
     this.setState({
-      cargoType: value
+      cargoType: vl
     });
   }
 
@@ -187,6 +189,7 @@ class EditTruck extends Component {
             name="cargoType"
             handleToUpdate={this._getCargoType.bind(this)}
             value={cargoType}
+            isSubmitForm={isSubmit}
           />
         </div>
 
@@ -220,7 +223,7 @@ class EditTruck extends Component {
         <div>
           <p>Price *</p>
           <input
-            type="text"
+            type="number"
             required
             name="price"
             value={price}
@@ -322,32 +325,34 @@ class EditTruck extends Component {
   render() {
     return (
       <div className="createContainer">
-        {/* Left */}
-        <div className="createTitle">
-          <FontAwesomeIcon icon={faEdit} className="faPlusCircle" />
-          <h1>Edit a truck</h1>
-        </div>
-        <form className="createBody" onSubmit={this._onSubmit}>
-          <div className="inputField">
-            {/* LEFT SIDE */}
-            {this._renderLeftSide()}
-            {/* RIGHT SIDE */}
-            {this._renderRightSide()}
+        <Header />
+        <div className="createWrapper">
+          {/* Left */}
+          <div className="createTitle">
+            <FontAwesomeIcon icon={faEdit} className="faPlusCircle" />
+            <h1>Edit a truck</h1>
           </div>
+          <form className="createBody" onSubmit={this._onSubmit}>
+            <div className="inputField">
+              {/* LEFT SIDE */}
+              {this._renderLeftSide()}
+              {/* RIGHT SIDE */}
+              {this._renderRightSide()}
+            </div>
 
-          {/* Submit */}
-          <div className="btnCreateWrapper">
-            <button className="submitCreate" type="submit">
-              Submit
-            </button>
-            <Link to="/" className="linkHome">
-              Back
-            </Link>
-          </div>
-          <p style={{ fontSize: 10, color: 'red' }}>
-            Fields marked with * are mandatory
-          </p>
-        </form>
+            {/* Submit */}
+            <div className="btnCreateWrapper">
+              <button className="submitCreate" type="submit">
+                Submit
+              </button>
+              <Link to="/" className="linkHome">
+                Back
+              </Link>
+            </div>
+            <p style={styles.mandatory}>Fields marked with * are mandatory</p>
+          </form>
+        </div>
+        <Footer />
       </div>
     );
   }
@@ -358,6 +363,11 @@ const styles = {
     fontSize: 11,
     fontStyle: 'italic',
     color: 'mediumblue'
+  },
+  mandatory: {
+    fontSize: 10,
+    color: 'red',
+    marginTop: 5
   }
 };
 

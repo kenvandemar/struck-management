@@ -52,7 +52,9 @@ const truckRecord = new Record({
   singleTruck: Map(),
   emptySearch: false,
   foundSearch: false,
-  page: 1
+  page: 1,
+  currentPage: null,
+  totalPages: null
 });
 
 const initialState = truckRecord();
@@ -62,9 +64,9 @@ const initialState = truckRecord();
 | FETCH ALL TRUCKS
 |--------------------------------------------------
 */
-export const fetchAllTrucks = _ => dispatch => {
+export const fetchTrucks = page => dispatch => {
   dispatch(fetchTruckRequest());
-  Api.fetchAllTrucks()
+  Api.fetchTrucks(page)
     .then(data => {
       dispatch(fetchTruckResponse(data));
     })
@@ -95,11 +97,11 @@ export const createTruck = (
     truckPlate,
     cargoType,
     driver,
-    truckType,
+    Number(truckType),
     price,
     dimension,
     parkingAddress,
-    productionYear,
+    Number(productionYear),
     status,
     description,
     publishedAt,
@@ -119,9 +121,9 @@ export const createTruck = (
 | DELETE A TRUCK
 |--------------------------------------------------
 */
-export const deleteTruck = id => dispatch => {
+export const deleteTruck = (id, page) => dispatch => {
   dispatch(deleteTruckRequest());
-  Api.deleteTruck(id)
+  Api.deleteTruck(id, page)
     .then(_ => {
       dispatch(deleteTruckResponse(id));
     })
@@ -133,10 +135,11 @@ export const deleteTruck = id => dispatch => {
 | FETCH A SINGLE TRUCK
 |--------------------------------------------------
 */
-export const fetchSingleTruck = id => dispatch => {
+export const fetchSingleTruck = (id, page) => dispatch => {
   dispatch(fetchSingTruckRequest());
-  Api.fetchSingeTruck(id)
+  Api.fetchSingeTruck(id, page)
     .then(response => {
+      console.log('HIHIH', response);
       dispatch(fetchSingleTruckResponse(response.data));
     })
     .catch(err => dispatch(fetchSingleTruckResponse(err)));
@@ -166,11 +169,11 @@ export const editTruck = (
     truckPlate,
     cargoType,
     driver,
-    truckType,
+    Number(truckType),
     price,
     dimension,
     parkingAddress,
-    productionYear,
+    Number(productionYear),
     status,
     description
   )
@@ -239,9 +242,7 @@ const actions = {
     );
   },
   [DELETE_TRUCK_REQUEST]: state => {
-    return state.withMutations(s =>
-      s.set('isDeleteTruck', true).set('trucks', List())
-    );
+    return state.withMutations(s => s.set('isDeleteTruck', true));
   },
   [EDIT_TRUCK_REQUEST]: state => {
     return state.withMutations(s =>
@@ -249,9 +250,7 @@ const actions = {
     );
   },
   [FETCH_SINGLE_TRUCK_REQUEST]: state => {
-    return state.withMutations(s =>
-      s.set('isFetchSingleTruck', true).set('trucks', List())
-    );
+    return state.withMutations(s => s.set('isFetchSingleTruck', true));
   },
   [SEARCH_TRUCK_REQUEST]: state => {
     return state.withMutations(s =>
@@ -271,7 +270,9 @@ const actions = {
       return state.withMutations(s =>
         s
           .set('isRequestTruck', false)
-          .set('trucks', state.trucks.merge(action.payload))
+          .set('trucks', state.trucks.merge(action.payload.trucks))
+          .set('currentPage', action.payload.current)
+          .set('totalPages', action.payload.pages)
       );
     }
   },

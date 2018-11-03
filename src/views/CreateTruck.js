@@ -4,12 +4,12 @@ import { bindActionCreators } from 'redux';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
-
+import Header from '../components/Header';
 import '../styles/create/styles.create.css';
 import Autocomplete from '../components/Autocomplete';
 import { createTruck } from '../modules/truckManagement.module';
 import MockList from '../MockList';
-import Helper from '../helper/helper';
+import Footer from '../components/Footer';
 
 class CreateTruck extends Component {
   constructor(props) {
@@ -18,11 +18,11 @@ class CreateTruck extends Component {
       truckPlate: '',
       cargoType: '',
       driver: '',
-      truckType: 0,
+      truckType: '',
       price: '',
       dimension: '',
       parkingAddress: '',
-      productionYear: 0,
+      productionYear: '',
       status: 'New',
       description: '',
       publishedAt: new Date(),
@@ -115,8 +115,10 @@ class CreateTruck extends Component {
     });
   };
   _getCargoType(value) {
+    let vl = value.slice();
+    vl = vl.join(', ').toString();
     this.setState({
-      cargoType: value
+      cargoType: vl
     });
   }
 
@@ -198,7 +200,7 @@ class CreateTruck extends Component {
         <div>
           <p>Price *</p>
           <input
-            type="text"
+            type="number"
             required
             name="price"
             value={price}
@@ -312,41 +314,43 @@ class CreateTruck extends Component {
   render() {
     return (
       <div className="createContainer">
-        {/* Left */}
-        <div className="createTitle">
-          <FontAwesomeIcon icon={faPlusCircle} className="faPlusCircle" />
-          <h1>Add a new truck</h1>
+        <Header />
+        <div className="createWrapper">
+          {/* Left */}
+          <div className="createTitle">
+            <FontAwesomeIcon icon={faPlusCircle} className="faPlusCircle" />
+            <h1>Add a new truck</h1>
+          </div>
+
+          <form
+            className="createBody"
+            onSubmit={this._onSubmit}
+            onKeyDown={this._onKeydownForm}
+          >
+            <div className="inputField">
+              {/* LEFT SIDE */}
+              {this._renderLeftSide()}
+              {/* RIGHT SIDE */}
+              {this._renderRightSide()}
+            </div>
+
+            {/* Submit */}
+            <div className="btnCreateWrapper">
+              <button
+                className="submitCreate"
+                type="submit"
+                disabled={this.state.isLicenseCorrect ? false : true}
+              >
+                Submit
+              </button>
+              <Link to="/" className="linkHome">
+                Back
+              </Link>
+            </div>
+            <p style={styles.mandatory}>Fields marked with * are mandatory</p>
+          </form>
         </div>
-
-        <form
-          className="createBody"
-          onSubmit={this._onSubmit}
-          onKeyDown={this._onKeydownForm}
-        >
-          <div className="inputField">
-            {/* LEFT SIDE */}
-            {this._renderLeftSide()}
-            {/* RIGHT SIDE */}
-            {this._renderRightSide()}
-          </div>
-
-          {/* Submit */}
-          <div className="btnCreateWrapper">
-            <button
-              className="submitCreate"
-              type="submit"
-              disabled={this.state.isLicenseCorrect ? false : true}
-            >
-              Submit
-            </button>
-            <Link to="/" className="linkHome">
-              Back
-            </Link>
-          </div>
-          <p style={{ fontSize: 10, color: 'red' }}>
-            Fields marked with * are mandatory
-          </p>
-        </form>
+        <Footer />
       </div>
     );
   }
@@ -356,6 +360,11 @@ const styles = {
     fontSize: 11,
     fontStyle: 'italic',
     color: 'mediumblue'
+  },
+  mandatory: {
+    fontSize: 10,
+    color: 'red',
+    marginTop: 5
   }
 };
 const mapStateToProps = state => ({

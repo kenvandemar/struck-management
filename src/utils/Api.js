@@ -39,8 +39,8 @@ const fetchData = (url, options = {}) => {
     });
 };
 // FETCH ALL TRUCKS
-const fetchAllTrucks = _ => {
-  return fetchData(`${URL_HOST_API_ENDPOINT}/trucks`);
+const fetchTrucks = page => {
+  return fetchData(`${URL_HOST_API_ENDPOINT}/trucks/${page}`);
 };
 
 // CREATE A TRUCK
@@ -73,13 +73,13 @@ const createTruck = (
 };
 
 // DELETE A TRUCK
-const deleteTruck = id => {
-  return axios.delete(`${URL_HOST_API_ENDPOINT}/trucks/${id}`);
+const deleteTruck = (id, page) => {
+  return axios.delete(`${URL_HOST_API_ENDPOINT}/trucks/${page}/${id}`);
 };
 
 // FETCH SINGLE TRUCK
-const fetchSingeTruck = id => {
-  return axios.get(`${URL_HOST_API_ENDPOINT}/trucks/${id}`);
+const fetchSingeTruck = (id, page) => {
+  return axios.get(`${URL_HOST_API_ENDPOINT}/trucks/${page}/${id}`);
 };
 
 // Search
@@ -128,7 +128,7 @@ const filterPrice = sortCondition => {
 };
 
 export default {
-  fetchAllTrucks,
+  fetchTrucks,
   createTruck,
   deleteTruck,
   fetchSingeTruck,

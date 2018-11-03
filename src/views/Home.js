@@ -11,7 +11,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import {
-  fetchAllTrucks,
+  fetchTrucks,
   deleteTruck,
   fetchSingleTruck,
   searchTruck,
@@ -20,11 +20,13 @@ import {
 } from '../modules/truckManagement.module';
 
 import Header from '../components/Header';
+import Footer from '../components/Footer';
 import Modal from '../components/Modal';
 
 import '../styles/home/styles.home.css';
 import '../styles/modal/styles.baseModal.css';
 import '../styles/deleteModal/styles.deleteModal.css';
+import Helper from '../helper/helper';
 
 const tableHeader = {
   data: [
@@ -52,16 +54,23 @@ class Home extends Component {
       foundSearch: false,
       items: [],
       focused: false,
-      input: ''
+      input: '',
+      page: 1,
+      currentPage: null,
+      totalPage: null
     };
   }
   componentDidMount() {
-    this.props.fetchAllTrucks();
+    this.props.fetchTrucks(this.state.page);
   }
   UNSAFE_componentWillReceiveProps(nextProps) {
-    if (nextProps.truck.toJS().trucks.length) {
+    console.log('CHECK NEXT PROPS', nextProps.truck.toJS());
+    let truckData = nextProps.truck.toJS();
+    if (truckData.trucks !== undefined && truckData.trucks !== null) {
       this.setState({
-        trucks: nextProps.truck.toJS().trucks
+        trucks: truckData.trucks,
+        currentPage: truckData.currentPage,
+        totalPage: truckData.totalPages
       });
     } else {
       this.setState({
@@ -102,7 +111,7 @@ class Home extends Component {
       (!value.length && this.state.emptySearch) ||
       (!value.length && this.state.foundSearch)
     ) {
-      this.props.fetchAllTrucks();
+      this.props.fetchTrucks(this.state.page);
     }
   };
   _onSearchTruck = e => {
@@ -154,7 +163,7 @@ class Home extends Component {
       items: state.items.filter((item, i) => i !== index)
     }));
     if (this.state.items.length === 1) {
-      this.props.fetchAllTrucks();
+      this.props.fetchTrucks(this.state.page);
     }
   }
 
@@ -168,9 +177,59 @@ class Home extends Component {
     }
   };
 
+  _onRenderFirst() {
+    const { currentPage } = this.state;
+    if (Number(currentPage) === 1) {
+      return <span className="disablePage">First</span>;
+    } else {
+      return (
+        <span onClick={() => this.props.fetchTrucks(1)} className="enablePage">
+          First
+        </span>
+      );
+    }
+  }
+
+  _onRenderLast() {
+    const { currentPage, totalPage } = this.state;
+    if (Number(currentPage) === totalPage) {
+      return <span className="disablePage">Last</span>;
+    } else {
+      return (
+        <span
+          onClick={() => this.props.fetchTrucks(totalPage)}
+          className="enablePage"
+        >
+          Last
+        </span>
+      );
+    }
+  }
+
+  _onRenderPageNum() {
+    const { currentPage, totalPage } = this.state;
+    let pages = [];
+    if (totalPage !== null && totalPage > 1) {
+      for (let i = 1; i <= Number(totalPage); i++) {
+        let isActivePage =
+          i === Number(currentPage) ? 'activePage' : 'inActivePage';
+        pages.push(
+          <p
+            key={i}
+            className={isActivePage}
+            onClick={() => this.props.fetchTrucks(i)}
+          >
+            {i}
+          </p>
+        );
+      }
+    }
+    return pages;
+  }
+
   render() {
     const { isRequestTruck } = this.props.truck.toJS();
-    const { trucks } = this.state;
+    const { trucks, currentPage } = this.state;
     if (!isRequestTruck) {
       return (
         <div className="homeContainer">
@@ -241,7 +300,10 @@ class Home extends Component {
                               icon={faEdit}
                               className="faEdit"
                               onClick={() =>
-                                this.props.fetchSingleTruck(item._id)
+                                this.props.fetchSingleTruck(
+                                  item._id,
+                                  currentPage
+                                )
                               }
                             />
                           </Link>
@@ -259,7 +321,7 @@ class Home extends Component {
                         <td>{item.cargoType}</td>
                         <td>{item.driver}</td>
                         <td>{item.truckType}</td>
-                        <td>{item.price}</td>
+                        <td>{Helper.formatMoney(item.price)}</td>
                         <td>{item.dimension}</td>
                         <td>{item.parkingAddress}</td>
                         <td>{item.productionYear}</td>
@@ -283,10 +345,12 @@ class Home extends Component {
 
           {/* Paging */}
           <div className="pagingContainer">
-            <p>Previous</p>
-            <p>1 2 3 4...</p>
-            <p>Next</p>
+            {this._onRenderFirst()}
+            {this._onRenderPageNum()}
+            {this._onRenderLast()}
           </div>
+
+          {/* MODAL */}
           <Modal ref={ref => (this.refDeleteTruck = ref)}>
             <div className="deleteModalContainer">
               <p className="deleteQuestion">
@@ -311,6 +375,7 @@ class Home extends Component {
               </div>
             </div>
           </Modal>
+          <Footer />
         </div>
       );
     }
@@ -351,7 +416,7 @@ const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
       startApp,
-      fetchAllTrucks,
+      fetchTrucks,
       deleteTruck,
       fetchSingleTruck,
       searchTruck,

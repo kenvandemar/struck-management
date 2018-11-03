@@ -5,7 +5,7 @@ var TruckSchema = new mongoose.Schema({
     cargoType:  {type: String, text: true},
     driver:  {type: String, text: true},
     truckType:  {type: String, text: true},
-    price:  {type: String, text: true},
+    price:  {type: Number, text: true},
     dimension:  {type: String, text: true},
     parkingAddress:  {type: String, text: true},
     productionYear: {type: Number, text: true},

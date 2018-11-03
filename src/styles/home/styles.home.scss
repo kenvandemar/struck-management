@@ -2,7 +2,10 @@ $theme: #34495e;
 $white: #fff;
 $black: #000;
 
-
+.homeContainer {
+    display: flex;
+    flex-direction: column;
+}
 .searchContainer {
     display: flex;
     flex-direction: row;
@@ -149,6 +152,7 @@ $black: #000;
     flex-direction: row;
     margin-top: 80px;
     justify-content: center;
+    align-items: center;
 }
 .pagingContainer > p {
     font-size: 12px;
@@ -174,4 +178,35 @@ $black: #000;
     text-align: center;
     font-size: 14px;
     color: red;
+}
+
+.pagingWrapper {
+
+}
+
+@mixin firstPage {
+    display: flex;
+    margin-right: 10px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.disablePage {
+    @include firstPage();
+    color: #979797;
+}
+.enablePage {
+    @include firstPage();
+    color: $black;
+    cursor: pointer;
+}
+
+.activePage {
+   font-weight: bold;
+   text-decoration: underline;
+   cursor: pointer;
+}
+
+.inActivePage {
+    cursor: pointer;
 }
