@@ -68,35 +68,91 @@ router.delete('/trucks/:page/:id', function(req, res, next) {
 })
 
 // SEARCH TRUCK
-router.get("/search", function(req, res, next){
+router.get("/search/:page", function(req, res, next) {
     var q = req.query.q
-        Truck.find({
-            $text: {
-                $search: new RegExp(q)
-            }
-        }, function(err, data) {
-            if (err) return next(err)
-            res.json(data)
-        }
-    )
-});
+    var perPage = 10
+    var page = req.params.page || 1
+    
+    Truck.aggregate([
+        { "$match": { "$text": { "$search": q }}},
+        { "$group": {
+            "_id": null,
+            // "Total_Results": { "$sum": 1 },
+            "trucks": {  
+                "$push": {
+                    "_id": "$_id",
+                    "truckPlate": "$truckPlate",
+                    "cargoType": "$cargoType",
+                    "driver": "$driver",
+                    "truckType": "$truckType",
+                    "price": "$price",
+                    "dimension": "$dimension",
+                    "parkingAddress": "$parkingAddress",
+                    "productionYear": "$productionYear",
+                    "status": "$status",
+                    "description": "$description",
+                    "publishedAt": "$publishedAt",
+                    "updatedAt": "$updatedAt",
+                }
+            },
+            "Total_Results": { "$sum": 1 },
+        }},
+        { "$unwind": "$trucks"},
+        { "$skip": (perPage * page) - perPage},
+        { "$limit": perPage},
+        { "$group": {
+            "_id": null,
+            "trucks": { "$push": "$trucks" },
+            "pages": { "$first": {"$ceil": {"$divide": ["$Total_Results", perPage]} }},
+        }}
+    ])
+    .exec(function(err, trucks) {
+        if (err) return next(err)
+        res.json({
+            trucks: trucks[0],
+            current: page,
+        })
+    })
+})
 
 // FILTER TRUCK ACCORDING STATUS
-router.get("/search/filter", function(req, res, next) {
+router.get("/search/filter/:page", function(req, res, next) {
     var status = req.query.f
-    Truck.find({
-        status: new RegExp(status)
-    }, function(err, data) {
-        if (err) return next(err)
-        res.json(data)
+    var perPage = 10
+    var page = req.params.page || 1
+
+    Truck.find({status: new RegExp(status)})
+    .skip((perPage * page) - perPage)
+    .limit(perPage)
+    .exec(function(err, trucks) {
+        Truck.countDocuments().exec(function(err, count) {
+            if (err) return next(err)
+            return res.json({
+                trucks,
+                current: page,
+                pages: Math.ceil(count / perPage)
+            })
+        })
     })
 })
 
 // SORT PRICE
-router.get("/search/price", function(req, res, next) {
-    Truck.find({}).sort(req.query.sort).exec(function(err, listings) {
-        if (err) return next(err)
-        res.json(listings)
-    })
+router.get("/search/price/:page", function(req, res, next) {
+    var perPage = 10
+    var page = req.params.page || 1
+    Truck.find({})
+        .sort(req.query.sort)
+        .skip((perPage * page) - perPage)
+        .limit(perPage)
+        .exec(function(err, trucks) {
+            Truck.countDocuments().exec(function(err, count) {
+                if (err) return next(err)
+                return res.json({
+                    trucks,
+                    current: page,
+                    pages: Math.ceil(count / perPage)
+                })
+            })
+        })
 })
 module.exports = router

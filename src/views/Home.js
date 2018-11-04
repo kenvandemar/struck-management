@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { startApp } from '../actions/app.action';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -56,15 +55,14 @@ class Home extends Component {
       focused: false,
       input: '',
       page: 1,
-      currentPage: null,
-      totalPage: null
+      currentPage: 1,
+      totalPage: 1
     };
   }
   componentDidMount() {
     this.props.fetchTrucks(this.state.page);
   }
   UNSAFE_componentWillReceiveProps(nextProps) {
-    console.log('CHECK NEXT PROPS', nextProps.truck.toJS());
     let truckData = nextProps.truck.toJS();
     if (truckData.trucks !== undefined && truckData.trucks !== null) {
       this.setState({
@@ -74,7 +72,9 @@ class Home extends Component {
       });
     } else {
       this.setState({
-        trucks: []
+        trucks: [],
+        currentPage: null,
+        totalPage: null
       });
     }
     if (nextProps.truck.toJS().emptySearch) {
@@ -105,7 +105,8 @@ class Home extends Component {
   _onChange = e => {
     let value = e.target.value;
     this.setState({
-      searchText: value
+      searchText: value,
+      currentPage: 1
     });
     if (
       (!value.length && this.state.emptySearch) ||
@@ -114,14 +115,15 @@ class Home extends Component {
       this.props.fetchTrucks(this.state.page);
     }
   };
-  _onSearchTruck = e => {
+  _onSearchTruck(e) {
+    const { searchText, currentPage } = this.state;
     e.preventDefault();
-    const { searchText } = this.state;
-    this.props.searchTruck(searchText);
+
+    this.props.searchTruck(searchText, currentPage);
     this.setState({
       searchText: ''
     });
-  };
+  }
 
   _renderEmptySearch() {
     const { emptySearch } = this.state;
@@ -134,7 +136,8 @@ class Home extends Component {
   }
 
   _onHandleOption = e => {
-    this.props.filterTruckStatus(e.target.value);
+    const { currentPage } = this.state;
+    this.props.filterTruckStatus(e.target.value, currentPage);
     this.setState({
       items: [...this.state.items, e.target.value]
     });
@@ -169,32 +172,35 @@ class Home extends Component {
 
   _onFilterPrice = e => {
     const { value } = e.target;
+    const { currentPage } = this.state;
     if (value === 'high') {
-      this.props.filterPrice('-price');
+      this.props.filterPrice('-price', currentPage);
     }
     if (value === 'low') {
-      this.props.filterPrice('price');
+      this.props.filterPrice('price', currentPage);
     }
   };
 
   _onRenderFirst() {
-    const { currentPage } = this.state;
-    if (Number(currentPage) === 1) {
+    const { currentPage, totalPage } = this.state;
+    if (Number(currentPage) === 1 && totalPage > 1) {
       return <span className="disablePage">First</span>;
-    } else {
+    } else if (Number(currentPage) > 1 && totalPage > 1) {
       return (
         <span onClick={() => this.props.fetchTrucks(1)} className="enablePage">
           First
         </span>
       );
+    } else {
+      return null;
     }
   }
 
   _onRenderLast() {
     const { currentPage, totalPage } = this.state;
-    if (Number(currentPage) === totalPage) {
+    if (Number(currentPage) === totalPage && totalPage > 1) {
       return <span className="disablePage">Last</span>;
-    } else {
+    } else if (Number(currentPage) < totalPage) {
       return (
         <span
           onClick={() => this.props.fetchTrucks(totalPage)}
@@ -203,6 +209,8 @@ class Home extends Component {
           Last
         </span>
       );
+    } else {
+      return null;
     }
   }
 
@@ -227,6 +235,21 @@ class Home extends Component {
     return pages;
   }
 
+  _onRenderPaging() {
+    const { emptySearch } = this.state;
+
+    if (!emptySearch) {
+      return (
+        <div className="pagingContainer">
+          {this._onRenderFirst()}
+          {this._onRenderPageNum()}
+          {this._onRenderLast()}
+        </div>
+      );
+    } else {
+      return null;
+    }
+  }
   render() {
     const { isRequestTruck } = this.props.truck.toJS();
     const { trucks, currentPage } = this.state;
@@ -238,7 +261,15 @@ class Home extends Component {
           {/* SEARCH FIELD */}
           <div className="searchContainer">
             {/* Search input */}
-            <form onSubmit={this._onSearchTruck} className="searchForm">
+            <form
+              onSubmit={e => {
+                this.setState({
+                  currentPage: 1
+                });
+                this._onSearchTruck(e);
+              }}
+              className="searchForm"
+            >
               <ul style={styles.tagWrapper}>
                 {this.state.items.map((item, i) => {
                   return (
@@ -344,11 +375,7 @@ class Home extends Component {
           </div>
 
           {/* Paging */}
-          <div className="pagingContainer">
-            {this._onRenderFirst()}
-            {this._onRenderPageNum()}
-            {this._onRenderLast()}
-          </div>
+          {this._onRenderPaging()}
 
           {/* MODAL */}
           <Modal ref={ref => (this.refDeleteTruck = ref)}>
@@ -415,7 +442,6 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
-      startApp,
       fetchTrucks,
       deleteTruck,
       fetchSingleTruck,

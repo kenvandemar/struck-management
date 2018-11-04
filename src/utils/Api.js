@@ -83,8 +83,8 @@ const fetchSingeTruck = (id, page) => {
 };
 
 // Search
-const searchTruck = text => {
-  return axios.get(`${URL_HOST_API_ENDPOINT}/search?q=${text}`);
+const searchTruck = (text, page) => {
+  return axios.get(`${URL_HOST_API_ENDPOINT}/search/${page}?q=${text}`);
 };
 
 // UPDATE SINGLE TRUCK
@@ -116,14 +116,16 @@ const updateSingleTruck = (
 };
 
 // FILTER STATUS
-const filterStatus = status => {
-  return axios.get(`${URL_HOST_API_ENDPOINT}/search/filter?f=${status}`);
+const filterStatus = (status, page) => {
+  return axios.get(
+    `${URL_HOST_API_ENDPOINT}/search/filter/${page}?f=${status}`
+  );
 };
 
 // SORT PRICE
-const filterPrice = sortCondition => {
+const filterPrice = (sortCondition, page) => {
   return axios.get(
-    `${URL_HOST_API_ENDPOINT}/search/price?sort=${sortCondition}`
+    `${URL_HOST_API_ENDPOINT}/search/price/${page}?sort=${sortCondition}`
   );
 };
 

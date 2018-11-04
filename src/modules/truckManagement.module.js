@@ -139,7 +139,6 @@ export const fetchSingleTruck = (id, page) => dispatch => {
   dispatch(fetchSingTruckRequest());
   Api.fetchSingeTruck(id, page)
     .then(response => {
-      console.log('HIHIH', response);
       dispatch(fetchSingleTruckResponse(response.data));
     })
     .catch(err => dispatch(fetchSingleTruckResponse(err)));
@@ -189,9 +188,9 @@ export const editTruck = (
 | SEARCH TRUCK
 |--------------------------------------------------
 */
-export const searchTruck = text => dispatch => {
+export const searchTruck = (text, page) => dispatch => {
   dispatch(searchTruckRequest());
-  Api.searchTruck(text)
+  Api.searchTruck(text, page)
     .then(response => {
       dispatch(searchTruckResponse(response.data));
     })
@@ -203,9 +202,9 @@ export const searchTruck = text => dispatch => {
 | FILTER TRUCK STATUS
 |--------------------------------------------------
 */
-export const filterTruckStatus = status => dispatch => {
+export const filterTruckStatus = (status, page) => dispatch => {
   dispatch(filterTruckRequest());
-  Api.filterStatus(status)
+  Api.filterStatus(status, page)
     .then(response => {
       dispatch(filterTruckResponse(response.data));
     })
@@ -217,9 +216,9 @@ export const filterTruckStatus = status => dispatch => {
 | FILTER PRICE
 |--------------------------------------------------
 */
-export const filterPrice = sortCondition => dispatch => {
+export const filterPrice = (sortCondition, page) => dispatch => {
   dispatch(filterTruckRequest());
-  Api.filterPrice(sortCondition)
+  Api.filterPrice(sortCondition, page)
     .then(response => {
       dispatch(filterTruckResponse(response.data));
     })
@@ -321,19 +320,26 @@ const actions = {
     if (action.payload instanceof Error) {
       return state.set('isFetchSingleTruck', false);
     } else {
-      if (action.payload.length) {
+      if (
+        action.payload.trucks !== undefined &&
+        action.payload.trucks !== null
+      ) {
         return state.withMutations(s =>
           s
             .set('isSearchTruck', false)
-            .set('trucks', action.payload)
+            .set('trucks', action.payload.trucks.trucks)
+            .set('currentPage', action.payload.current)
+            .set('totalPages', action.payload.trucks.pages)
             .set('foundSearch', true)
         );
       } else {
         return state.withMutations(s =>
           s
             .set('isSearchTruck', false)
-            .set('trucks', action.payload)
+            .set('trucks', List())
             .set('emptySearch', true)
+            .set('currentPage', 1)
+            .set('totalPages', 1)
         );
       }
     }
@@ -343,7 +349,11 @@ const actions = {
       return state.set('isFilterTruck', false);
     } else {
       return state.withMutations(s =>
-        s.set('isFilterTruck', false).set('trucks', action.payload)
+        s
+          .set('isFilterTruck', false)
+          .set('trucks', action.payload.trucks)
+          .set('currentPage', action.payload.current)
+          .set('totalPages', action.payload.pages)
       );
     }
   },
@@ -352,7 +362,11 @@ const actions = {
       return state.set('isFilterTruck', false);
     } else {
       return state.withMutations(s =>
-        s.set('isFilterTruck', false).set('trucks', action.payload)
+        s
+          .set('isFilterTruck', false)
+          .set('trucks', action.payload.trucks)
+          .set('currentPage', action.payload.current)
+          .set('totalPages', action.payload.pages)
       );
     }
   }
