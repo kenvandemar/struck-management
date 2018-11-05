@@ -7,11 +7,8 @@ import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { editTruck } from '../modules/truckManagement.module';
 import Autocomplete from '../components/Autocomplete';
 import MockList from '../MockList';
-import Helper from '../helper/helper';
 
 import '../styles/create/styles.create.css';
-import Footer from '../components/Footer';
-import Header from '../components/Header';
 
 class EditTruck extends Component {
   constructor(props) {
@@ -33,53 +30,88 @@ class EditTruck extends Component {
       char_textArea_length: 0,
       char_park_length: 0,
       isLicenseCorrect: false,
+      isDimensionCorrect: false,
       plateLength: 0,
+      dimensionLength: 0,
       isSubmit: false
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('llllllll', nextProps.truck.singleTruck.toJS());
     let singgleTruckData = nextProps.truck.singleTruck.toJS();
     if (Object.keys(singgleTruckData).length) {
-      this.setState({
-        truckPlate: singgleTruckData.truckPlate,
-        cargoType: singgleTruckData.cargoType,
-        driver: singgleTruckData.driver,
-        truckType: singgleTruckData.truckType,
-        price: singgleTruckData.price,
-        dimension: singgleTruckData.dimension,
-        parkingAddress: singgleTruckData.parkingAddress,
-        productionYear: singgleTruckData.productionYear,
-        status: singgleTruckData.status,
-        description: singgleTruckData.description,
-        publishedAt: singgleTruckData.publishedAt,
-        updatedAt: singgleTruckData.updatedAt,
-        _id: singgleTruckData._id,
-        char_park_length: singgleTruckData.parkingAddress.length,
-        char_textArea_length: singgleTruckData.description.length
-      });
+      this.setState(
+        {
+          truckPlate: singgleTruckData.truckPlate,
+          cargoType: singgleTruckData.cargoType,
+          driver: singgleTruckData.driver,
+          truckType: singgleTruckData.truckType,
+          price: singgleTruckData.price,
+          dimension: singgleTruckData.dimension,
+          parkingAddress: singgleTruckData.parkingAddress,
+          productionYear: singgleTruckData.productionYear,
+          status: singgleTruckData.status,
+          description: singgleTruckData.description,
+          publishedAt: singgleTruckData.publishedAt,
+          updatedAt: singgleTruckData.updatedAt,
+          _id: singgleTruckData._id,
+          char_park_length: singgleTruckData.parkingAddress.length,
+          char_textArea_length: singgleTruckData.description.length
+        },
+        () => {
+          const { truckPlate, dimension } = this.state;
+          this._onValidatePattern(truckPlate, dimension);
+        }
+      );
+    }
+  }
+  _onValidatePattern(plate, dimensions) {
+    const { truckPlate, dimension } = this.state;
+    // We assume our license plate follow format:
+    // 30A-12345(dda-dddd) [d:digit, a: alphabet, -: character '-']
+    const truckPlatePatt = /\d\d[A-Z]-\b\d{5}\b/g;
+
+    // This Dimension Pattern only match for dimension likes: 4.5-4.3-4.4
+    const dimensionPatt = /[+-]?([0-9]+([.][0-9]*))-[+-]?([0-9]+([.][0-9]*))-[+-]?([0-9]+([.][0-9]*))/g;
+    if (truckPlate.length || dimension.length) {
+      if (plate !== null) {
+        let isTruckPlateCorrect = truckPlatePatt.test(plate);
+        if (isTruckPlateCorrect) {
+          this.setState({ isLicenseCorrect: true });
+        } else {
+          this.setState({ isLicenseCorrect: false });
+        }
+      }
+      if (dimensions !== null) {
+        let isDimensionCorrect = dimensionPatt.test(dimensions);
+        if (isDimensionCorrect) {
+          this.setState({ isDimensionCorrect: true });
+        } else {
+          this.setState({ isDimensionCorrect: false });
+        }
+      }
     }
   }
 
   _onChange = e => {
-    const patt = /\d\d[A-Z]\-\b\d{5}\b/g;
     const state = this.state;
-    let targetName = e.target.name;
-    let charLength = e.target.value.length;
-    state[e.target.name] = e.target.value;
+    const { value, name } = e.target;
+    let targetName = name;
+    let charLength = value.length;
+    state[e.target.name] = value;
     this.setState(state);
 
     if (targetName === 'truckPlate') {
-      let isCorrectPatt = patt.test(e.target.value);
       this.setState({
         plateLength: charLength
       });
-      if (isCorrectPatt) {
-        this.setState({ isLicenseCorrect: true });
-      } else {
-        this.setState({ isLicenseCorrect: false });
-      }
+      this._onValidatePattern(value, null);
+    }
+    if (targetName === 'dimension') {
+      this.setState({
+        dimensionLength: charLength
+      });
+      this._onValidatePattern(null, value);
     }
 
     if (targetName === 'description') {
@@ -142,15 +174,19 @@ class EditTruck extends Component {
 
   _warningPlateFormat() {
     if (!this.state.isLicenseCorrect && this.state.plateLength) {
-      return (
-        <p style={{ fontSize: 10, color: 'red', fontStyle: 'italic' }}>
-          Wrong format
-        </p>
-      );
+      return <p style={styles.warningPattern}>Incorrect truck plate format</p>;
     } else {
       return null;
     }
   }
+  _warningDimensionFormat() {
+    if (!this.state.isDimensionCorrect && this.state.dimensionLength) {
+      return <p style={styles.warningPattern}>Incorrect dimension format</p>;
+    } else {
+      return null;
+    }
+  }
+
   // LEFT SIDE
   _renderLeftSide() {
     const {
@@ -210,7 +246,7 @@ class EditTruck extends Component {
         <div className="truckTypeWrapper">
           <p>Truck type</p>
           <input
-            type="text"
+            type="number"
             name="truckType"
             value={truckType}
             onChange={this._onChange}
@@ -239,7 +275,9 @@ class EditTruck extends Component {
             name="dimension"
             value={dimension}
             onChange={this._onChange}
+            placeholder={'30A-12345'}
           />
+          {this._warningDimensionFormat()}
         </div>
       </div>
     );
@@ -323,9 +361,9 @@ class EditTruck extends Component {
   }
 
   render() {
+    const { isLicenseCorrect, isDimensionCorrect } = this.state;
     return (
       <div className="createContainer">
-        <Header />
         <div className="createWrapper">
           {/* Left */}
           <div className="createTitle">
@@ -342,17 +380,20 @@ class EditTruck extends Component {
 
             {/* Submit */}
             <div className="btnCreateWrapper">
-              <button className="submitCreate" type="submit">
+              <button
+                className="submitCreate"
+                type="submit"
+                disabled={isLicenseCorrect || isDimensionCorrect ? false : true}
+              >
                 Submit
               </button>
-              <Link to="/" className="linkHome">
+              <Link to="/Home" className="linkHome">
                 Back
               </Link>
             </div>
             <p style={styles.mandatory}>Fields marked with * are mandatory</p>
           </form>
         </div>
-        <Footer />
       </div>
     );
   }
@@ -368,6 +409,11 @@ const styles = {
     fontSize: 10,
     color: 'red',
     marginTop: 5
+  },
+  warningPattern: {
+    fontSize: 10,
+    color: 'red',
+    fontStyle: 'italic'
   }
 };
 

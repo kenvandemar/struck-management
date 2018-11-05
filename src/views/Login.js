@@ -49,7 +49,7 @@ class Login extends Component {
         </div>
 
         <div className="loginBtn" onClick={() => console.log()}>
-          <Link to="/" className="linkHome">
+          <Link to="/Home" className="linkHome">
             Login
           </Link>
         </div>

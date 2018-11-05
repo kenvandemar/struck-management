@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { Router, Route } from 'react-router-dom';
+import { Router, Route, Redirect } from 'react-router-dom';
 
 import './index.css';
 import App from './App';
@@ -16,17 +16,27 @@ import CreateTruck from './views/CreateTruck';
 import EditTruck from './views/EditTruck';
 
 import history from './Config/history';
+import Footer from './components/Footer';
+import './App.css';
+import Header from './components/Header';
 
 const store = createStore();
 ReactDOM.render(
   <Provider store={store}>
     <Router history={history}>
       <div>
-        <Route exact path="/" component={Home} />
-        <Route path="/edit" component={EditTruck} />
-        <Route path="/create" component={CreateTruck} />
-        <Route path="/show/:id" component={ShowTruck} />
-        <Route path="/auth/login" component={Login} />
+        <Header />
+        <div className="App">
+          <Route path="/Home" component={Home} />
+          <Route path="/edit" component={EditTruck} />
+          <Route path="/create" component={CreateTruck} />
+          <Route path="/show/:id" component={ShowTruck} />
+          <Route exact path="/" render={() => <Redirect to="/auth/login" />} />
+          <Route exact path="/auth/login" component={Login} />
+        </div>
+        <div>
+          <Footer />
+        </div>
       </div>
     </Router>
   </Provider>,

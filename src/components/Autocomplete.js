@@ -26,6 +26,16 @@ class Autocomplete extends Component {
     };
   }
 
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    let value = nextProps.value;
+    if (nextProps.name === 'cargoType' && value !== undefined) {
+      value = value.split(',');
+      this.setState({
+        items: value
+      });
+    }
+  }
+
   componentDidUpdate(prevProps, prevState) {
     if (
       this.state.userInput !== prevState.userInput &&
@@ -103,7 +113,6 @@ class Autocomplete extends Component {
       if (activeSuggestion - 1 === filteredSuggestions.length) {
         return;
       }
-
       this.setState({ activeSuggestion: activeSuggestion + 1 });
     }
 
@@ -120,21 +129,23 @@ class Autocomplete extends Component {
 
   _onRemoveTag(index) {
     this.setState(state => ({
-      items: state.items.filter((item, i) => i !== index)
+      items: state.items.filter((item, i) => i !== index),
+      userInput: ''
     }));
   }
   _renderInputValue = _ => {
     let inputValue = '';
-    const { isSubmitForm, value, name } = this.props;
+    const { isSubmitForm, value } = this.props;
 
     const { userInput, showSuggestions, items } = this.state;
 
     if (isSubmitForm !== undefined && isSubmitForm) {
       inputValue = '';
     }
-    if (value && !showSuggestions && !items.length) {
-      inputValue = value;
-    }
+    // if (value && !showSuggestions ) {
+    //   console.log('MEOOOOO')
+    //   inputValue = value
+    // }
 
     if (userInput) {
       inputValue = userInput;
@@ -233,7 +244,7 @@ class Autocomplete extends Component {
 }
 const styles = {
   tagWrapper: {
-    maxWidth: '90%',
+    maxWidth: '95%',
     border: '1px solid #ddd',
     paddingBottom: '3px',
     paddingLeft: '3px',

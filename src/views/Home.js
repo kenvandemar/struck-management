@@ -17,9 +17,6 @@ import {
   filterTruckStatus,
   filterPrice
 } from '../modules/truckManagement.module';
-
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import Modal from '../components/Modal';
 
 import '../styles/home/styles.home.css';
@@ -56,7 +53,11 @@ class Home extends Component {
       input: '',
       page: 1,
       currentPage: 1,
-      totalPage: 1
+      totalPage: 1,
+      statusName: '',
+      statusValue: '',
+      priceName: '',
+      priceValue: ''
     };
   }
   componentDidMount() {
@@ -87,6 +88,12 @@ class Home extends Component {
     } else {
       this.setState({ foundSearch: false });
     }
+  }
+
+  _onResetPage() {
+    this.setState({
+      currentPage: 1
+    });
   }
 
   _renderTableHeader() {
@@ -135,12 +142,30 @@ class Home extends Component {
     return null;
   }
 
-  _onHandleOption = e => {
+  _onHandleStatusOption = e => {
     const { currentPage } = this.state;
+    const { value, name } = e.target;
     this.props.filterTruckStatus(e.target.value, currentPage);
     this.setState({
-      items: [...this.state.items, e.target.value]
+      items: value.split(),
+      statusName: name,
+      statusValue: value,
+      priceName: '',
+      priceValue: ''
     });
+  };
+
+  _onFilterPrice = e => {
+    const { value, name } = e.target;
+    const { currentPage } = this.state;
+    this.setState({
+      priceName: name,
+      priceValue: value,
+      items: value.split(),
+      statusName: '',
+      statusValue: ''
+    });
+    this._onFilterPriceOnPage(value, currentPage);
   };
 
   _onHandleKeyDown = e => {
@@ -163,23 +188,16 @@ class Home extends Component {
 
   _onRemoveTag(index) {
     this.setState(state => ({
-      items: state.items.filter((item, i) => i !== index)
+      items: state.items.filter((item, i) => i !== index),
+      statusName: '',
+      statusValue: '',
+      priceName: '',
+      priceValue: ''
     }));
     if (this.state.items.length === 1) {
       this.props.fetchTrucks(this.state.page);
     }
   }
-
-  _onFilterPrice = e => {
-    const { value } = e.target;
-    const { currentPage } = this.state;
-    if (value === 'high') {
-      this.props.filterPrice('-price', currentPage);
-    }
-    if (value === 'low') {
-      this.props.filterPrice('price', currentPage);
-    }
-  };
 
   _onRenderFirst() {
     const { currentPage, totalPage } = this.state;
@@ -214,6 +232,25 @@ class Home extends Component {
     }
   }
 
+  _onFilterPriceOnPage(condition, page) {
+    if (condition === 'highToLow') {
+      this.props.filterPrice('-price', page);
+    }
+    if (condition === 'lowToHigh') {
+      this.props.filterPrice('price', page);
+    }
+  }
+  _onFetchTrucksOnPaging(index) {
+    const { statusName, statusValue, priceName, priceValue } = this.state;
+    if (statusName === 'statusSelected') {
+      this.props.filterTruckStatus(statusValue, index);
+    } else if (priceName === 'priceSelected') {
+      this._onFilterPriceOnPage(priceValue, index);
+    } else {
+      this.props.fetchTrucks(index);
+    }
+  }
+
   _onRenderPageNum() {
     const { currentPage, totalPage } = this.state;
     let pages = [];
@@ -225,7 +262,7 @@ class Home extends Component {
           <p
             key={i}
             className={isActivePage}
-            onClick={() => this.props.fetchTrucks(i)}
+            onClick={() => this._onFetchTrucksOnPaging(i)}
           >
             {i}
           </p>
@@ -250,22 +287,36 @@ class Home extends Component {
       return null;
     }
   }
+  _onClearSearch() {
+    const { items } = this.state;
+    if (items.length) {
+      return (
+        <div
+          className="clearSearch"
+          onClick={() => {
+            this.props.fetchTrucks(1);
+            this.setState({
+              items: []
+            });
+          }}
+        >
+          <p>Clear search</p>
+        </div>
+      );
+    }
+  }
   render() {
     const { isRequestTruck } = this.props.truck.toJS();
     const { trucks, currentPage } = this.state;
     if (!isRequestTruck) {
       return (
         <div className="homeContainer">
-          <Header />
-
           {/* SEARCH FIELD */}
           <div className="searchContainer">
             {/* Search input */}
             <form
               onSubmit={e => {
-                this.setState({
-                  currentPage: 1
-                });
+                this._onResetPage();
                 this._onSearchTruck(e);
               }}
               className="searchForm"
@@ -290,15 +341,21 @@ class Home extends Component {
                   onChange={this._onChange}
                   onKeyDown={this._onHandleKeyDown}
                   value={this.state.searchText}
+                  autoComplete="off"
                 />
               </ul>
+              {this._onClearSearch()}
             </form>
 
             {/* Filter */}
             <div className="filterContainer">
               {/* Status */}
-              <div className="select">
-                <select name="slct" id="slct" onChange={this._onHandleOption}>
+              <div className="select" onMouseDown={() => this._onResetPage()}>
+                <select
+                  name="statusSelected"
+                  id="slct"
+                  onChange={this._onHandleStatusOption}
+                >
                   <option>Choose Status</option>
                   <option value="New">New</option>
                   <option value="In-use">In-use</option>
@@ -307,11 +364,15 @@ class Home extends Component {
               </div>
 
               {/* Price */}
-              <div className="select">
-                <select name="slct" id="slct" onChange={this._onFilterPrice}>
+              <div className="select" onMouseDown={() => this._onResetPage()}>
+                <select
+                  name="priceSelected"
+                  id="slct"
+                  onChange={this._onFilterPrice}
+                >
                   <option>Choose Price</option>
-                  <option value="high">High to Low</option>
-                  <option value="low">Low to High</option>
+                  <option value="highToLow">High to Low</option>
+                  <option value="lowToHigh">Low to High</option>
                 </select>
               </div>
             </div>
@@ -393,7 +454,7 @@ class Home extends Component {
                 <div
                   className="deleteAction-agree"
                   onClick={() => {
-                    this.props.deleteTruck(this.state.truckId);
+                    this.props.deleteTruck(this.state.truckId, currentPage);
                     this.refDeleteTruck.close();
                   }}
                 >
@@ -402,7 +463,6 @@ class Home extends Component {
               </div>
             </div>
           </Modal>
-          <Footer />
         </div>
       );
     }

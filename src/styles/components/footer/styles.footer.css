@@ -1,4 +1,6 @@
 .footerContainer {
+  bottom: 0;
+  position: relative;
   background-color: #192849;
   height: 150px;
   width: 100%;

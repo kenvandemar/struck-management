@@ -34,11 +34,12 @@ const searchTruckRequest = createAction(SEARCH_TRUCK_REQUEST);
 const searchTruckResponse = createAction(SEARCH_TRUCK_RESPONSE);
 
 const FILTER_TRUCK_REQUEST = 'trucks/FILTER_STATUS_REQUEST';
-const FILTER_STATUS_RESPONSE = 'trucks/FILTER_TRUCK_REQUEST';
+const FILTER_STATUS_RESPONSE = 'trucks/FILTER_STATUS_RESPONSE';
+const FILTER_PRICE_RESPONSE = 'trucks/FILTER_PRICE_RESPONSE';
+
 const filterTruckRequest = createAction(FILTER_TRUCK_REQUEST);
 const filterTruckResponse = createAction(FILTER_STATUS_RESPONSE);
-const FILTER_PRICE_RESPONSE = 'trucks/FILTER_PRICE_RESPONSE';
-const filterPriceResponse = 'trucks/FILTER_PRICE_RESPONSE';
+const filterPriceResponse = createAction(FILTER_PRICE_RESPONSE);
 
 const truckRecord = new Record({
   isRequestTruck: true,
@@ -111,7 +112,7 @@ export const createTruck = (
       let truckArr = [];
       truckArr.push(result.data);
       dispatch(createTruckResponse(truckArr));
-      history.push('/');
+      history.push('/Home');
     })
     .catch(err => dispatch(createTruckResponse(err)));
 };
@@ -178,7 +179,7 @@ export const editTruck = (
   )
     .then(response => {
       dispatch(editTruckResponse(response));
-      history.push('/');
+      history.push('/Home');
     })
     .catch(err => dispatch(editTruckResponse(err)));
 };
@@ -220,9 +221,9 @@ export const filterPrice = (sortCondition, page) => dispatch => {
   dispatch(filterTruckRequest());
   Api.filterPrice(sortCondition, page)
     .then(response => {
-      dispatch(filterTruckResponse(response.data));
+      dispatch(filterPriceResponse(response.data));
     })
-    .catch(err => dispatch(filterTruckResponse(err)));
+    .catch(err => dispatch(filterPriceResponse(err)));
 };
 /**
 |--------------------------------------------------
@@ -272,6 +273,7 @@ const actions = {
           .set('trucks', state.trucks.merge(action.payload.trucks))
           .set('currentPage', action.payload.current)
           .set('totalPages', action.payload.pages)
+          .set('emptySearch', false)
       );
     }
   },
@@ -306,6 +308,7 @@ const actions = {
         s
           .set('isFetchSingleTruck', false)
           .set('singleTruck', state.singleTruck.merge(action.payload))
+          .set('emptySearch', false)
       );
     }
   },
@@ -327,7 +330,7 @@ const actions = {
         return state.withMutations(s =>
           s
             .set('isSearchTruck', false)
-            .set('trucks', action.payload.trucks.trucks)
+            .set('trucks', state.trucks.merge(action.payload.trucks.trucks))
             .set('currentPage', action.payload.current)
             .set('totalPages', action.payload.trucks.pages)
             .set('foundSearch', true)
@@ -338,8 +341,6 @@ const actions = {
             .set('isSearchTruck', false)
             .set('trucks', List())
             .set('emptySearch', true)
-            .set('currentPage', 1)
-            .set('totalPages', 1)
         );
       }
     }
@@ -348,13 +349,27 @@ const actions = {
     if (action.payload instanceof Error) {
       return state.set('isFilterTruck', false);
     } else {
-      return state.withMutations(s =>
-        s
-          .set('isFilterTruck', false)
-          .set('trucks', action.payload.trucks)
-          .set('currentPage', action.payload.current)
-          .set('totalPages', action.payload.pages)
-      );
+      if (
+        action.payload.trucks !== undefined &&
+        action.payload.trucks !== null
+      ) {
+        return state.withMutations(s =>
+          s
+            .set('isFilterTruck', false)
+            .set('trucks', state.trucks.merge(action.payload.trucks.trucks))
+            .set('currentPage', action.payload.current)
+            .set('totalPages', action.payload.trucks.pages)
+            .set('foundSearch', true)
+            .set('emptySearch', false)
+        );
+      } else {
+        return state.withMutations(s =>
+          s
+            .set('isFilterTruck', false)
+            .set('trucks', List())
+            .set('emptySearch', true)
+        );
+      }
     }
   },
   [FILTER_PRICE_RESPONSE]: (state, action) => {
@@ -364,9 +379,10 @@ const actions = {
       return state.withMutations(s =>
         s
           .set('isFilterTruck', false)
-          .set('trucks', action.payload.trucks)
+          .set('trucks', state.trucks.merge(action.payload.trucks))
           .set('currentPage', action.payload.current)
           .set('totalPages', action.payload.pages)
+          .set('emptySearch', false)
       );
     }
   }

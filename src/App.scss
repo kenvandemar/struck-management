@@ -4,9 +4,10 @@
   font-size: 62.5%;
 }
 .App {
+    margin: 0;
     width: 100%;
-    height: 100%;
-    background: #ebebeb;
+    background: #fff;
+    min-height: calc(100vh - 150px);
 }
 .clear:before, .clear:after {
     content: "\0020";

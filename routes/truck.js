@@ -1,6 +1,5 @@
 var express = require('express')
 var router = express.Router()
-var mongoose = require('mongoose')
 var Truck = require('../models/Truck')
 
 // GET ALL TRUCKS
@@ -121,17 +120,44 @@ router.get("/search/filter/:page", function(req, res, next) {
     var perPage = 10
     var page = req.params.page || 1
 
-    Truck.find({status: new RegExp(status)})
-    .skip((perPage * page) - perPage)
-    .limit(perPage)
+
+    Truck.aggregate([
+        { "$match": { "status": status }},
+        { "$group": {
+            "_id": null,
+            "trucks": {
+                "$push": {
+                    "_id": "$_id",
+                    "truckPlate": "$truckPlate",
+                    "cargoType": "$cargoType",
+                    "driver": "$driver",
+                    "truckType": "$truckType",
+                    "price": "$price",
+                    "dimension": "$dimension",
+                    "parkingAddress": "$parkingAddress",
+                    "productionYear": "$productionYear",
+                    "status": "$status",
+                    "description": "$description",
+                    "publishedAt": "$publishedAt",
+                    "updatedAt": "$updatedAt",
+                }
+            },
+            "Total_Results": { "$sum": 1 },
+        }},
+        { "$unwind": "$trucks"},
+        { "$skip": (perPage * page) - perPage},
+        { "$limit": perPage},
+        { "$group": {
+            "_id": null,
+            "trucks": { "$push": "$trucks" },
+            "pages": { "$first": {"$ceil": {"$divide": ["$Total_Results", perPage]} }},
+        }}
+    ])
     .exec(function(err, trucks) {
-        Truck.countDocuments().exec(function(err, count) {
-            if (err) return next(err)
-            return res.json({
-                trucks,
-                current: page,
-                pages: Math.ceil(count / perPage)
-            })
+        if (err) return next(err)
+        res.json({
+            trucks: trucks[0],
+            current: page,
         })
     })
 })

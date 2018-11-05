@@ -4,12 +4,11 @@ import { bindActionCreators } from 'redux';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
-import Header from '../components/Header';
-import '../styles/create/styles.create.css';
+
 import Autocomplete from '../components/Autocomplete';
 import { createTruck } from '../modules/truckManagement.module';
 import MockList from '../MockList';
-import Footer from '../components/Footer';
+import '../styles/create/styles.create.css';
 
 class CreateTruck extends Component {
   constructor(props) {
@@ -30,32 +29,59 @@ class CreateTruck extends Component {
       char_textArea_length: 0,
       char_park_length: 0,
       isLicenseCorrect: false,
+      isDimensionCorrect: false,
       plateLength: 0,
+      dimensionLength: 0,
       isSubmit: false
     };
   }
+  _onValidatePattern(plate, dimensions) {
+    const { truckPlate, dimension } = this.state;
+    // We assume our license plate follow format:
+    // 30A-12345(dda-dddd) [d:digit, a: alphabet, -: character '-']
+    const truckPlatePatt = /\d\d[A-Z]-\b\d{5}\b/g;
 
+    // This Dimension Pattern only match for dimension likes: 4.5-4.3-4.4
+    const dimensionPatt = /[+-]?([0-9]+([.][0-9]*))-[+-]?([0-9]+([.][0-9]*))-[+-]?([0-9]+([.][0-9]*))/g;
+    if (truckPlate.length || dimension.length) {
+      if (plate !== null) {
+        let isTruckPlateCorrect = truckPlatePatt.test(plate);
+        if (isTruckPlateCorrect) {
+          this.setState({ isLicenseCorrect: true });
+        } else {
+          this.setState({ isLicenseCorrect: false });
+        }
+      }
+      if (dimensions !== null) {
+        let isDimensionCorrect = dimensionPatt.test(dimensions);
+        if (isDimensionCorrect) {
+          this.setState({ isDimensionCorrect: true });
+        } else {
+          this.setState({ isDimensionCorrect: false });
+        }
+      }
+    }
+  }
   _onChange = e => {
-    // We assume our license plate follow format 30A-12345
-    const patt = /\d\d[A-Z]\-\b\d{5}\b/g;
-
     const state = this.state;
-    let targetName = e.target.name;
+    const { value, name } = e.target;
+    let targetName = name;
 
-    let charLength = e.target.value.length;
-    state[targetName] = e.target.value;
+    let charLength = value.length;
+    state[targetName] = value;
     this.setState(state);
 
     if (targetName === 'truckPlate') {
-      let isCorrectPatt = patt.test(e.target.value);
       this.setState({
         plateLength: charLength
       });
-      if (isCorrectPatt) {
-        this.setState({ isLicenseCorrect: true });
-      } else {
-        this.setState({ isLicenseCorrect: false });
-      }
+      this._onValidatePattern(value, null);
+    }
+    if (targetName === 'dimension') {
+      this.setState({
+        dimensionLength: charLength
+      });
+      this._onValidatePattern(null, value);
     }
 
     if (targetName === 'description') {
@@ -129,15 +155,19 @@ class CreateTruck extends Component {
   }
   _warningPlateFormat() {
     if (!this.state.isLicenseCorrect && this.state.plateLength) {
-      return (
-        <p style={{ fontSize: 10, color: 'red', fontStyle: 'italic' }}>
-          Incorrect format
-        </p>
-      );
+      return <p style={styles.warningPattern}>Incorrect truck plate format</p>;
     } else {
       return null;
     }
   }
+  _warningDimensionFormat() {
+    if (!this.state.isDimensionCorrect && this.state.dimensionLength) {
+      return <p style={styles.warningPattern}>Incorrect dimension format</p>;
+    } else {
+      return null;
+    }
+  }
+
   // LEFT SIDE
   _renderLeftSide() {
     const { truckPlate, truckType, price, dimension, isSubmit } = this.state;
@@ -216,7 +246,9 @@ class CreateTruck extends Component {
             name="dimension"
             value={dimension}
             onChange={this._onChange}
+            placeholder={'9.5-1.9-22'}
           />
+          {this._warningDimensionFormat()}
         </div>
       </div>
     );
@@ -314,7 +346,6 @@ class CreateTruck extends Component {
   render() {
     return (
       <div className="createContainer">
-        <Header />
         <div className="createWrapper">
           {/* Left */}
           <div className="createTitle">
@@ -339,18 +370,21 @@ class CreateTruck extends Component {
               <button
                 className="submitCreate"
                 type="submit"
-                disabled={this.state.isLicenseCorrect ? false : true}
+                disabled={
+                  this.state.isLicenseCorrect && this.state.isDimensionCorrect
+                    ? false
+                    : true
+                }
               >
                 Submit
               </button>
-              <Link to="/" className="linkHome">
+              <Link to="/Home" className="linkHome">
                 Back
               </Link>
             </div>
             <p style={styles.mandatory}>Fields marked with * are mandatory</p>
           </form>
         </div>
-        <Footer />
       </div>
     );
   }
@@ -365,6 +399,11 @@ const styles = {
     fontSize: 10,
     color: 'red',
     marginTop: 5
+  },
+  warningPattern: {
+    fontSize: 10,
+    color: 'red',
+    fontStyle: 'italic'
   }
 };
 const mapStateToProps = state => ({
