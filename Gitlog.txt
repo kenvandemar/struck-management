@@ -1,0 +1,175 @@
+commit 17805caa61eaae9f3b8fb3b4ad0ccab2d6d9be73
+Author: Khanh Nguyen <duykhanh1310@gmail.com>
+Date:   Mon Nov 5 16:09:58 2018 +0700
+
+    - Update ReadMe
+
+commit f805cf62ffe3bb62b1cc022fec1d7d4e46102afe
+Author: Khanh Nguyen <duykhanh1310@gmail.com>
+Date:   Mon Nov 5 16:04:14 2018 +0700
+
+    - Update Read me and export truckDB
+
+commit a2032a9b1c23124b943bf55e54a7f9a7c48f1cc1
+Author: Khanh Nguyen <duykhanh1310@gmail.com>
+Date:   Mon Nov 5 15:40:12 2018 +0700
+
+    - Finalize product
+
+commit 7969dbf653eeeb6d957c47fc2ccf375adc60a9ea
+Author: Khanh Nguyen <duykhanh1310@gmail.com>
+Date:   Mon Nov 5 13:22:38 2018 +0700
+
+    - Modify Readme
+
+commit dc1cea951a7627f5fbcd0ca84f61cf78554c1836
+Author: Khanh Nguyen <duykhanh1310@gmail.com>
+Date:   Mon Nov 5 13:22:07 2018 +0700
+
+    - fix style
+
+commit 69a73b9c17c6bb62b9b63ac5298399b509983065
+Author: Khanh Nguyen <duykhanh1310@gmail.com>
+Date:   Mon Nov 5 13:20:08 2018 +0700
+
+    - Fix style
+
+commit e66c54ef58e2c067b82f792efd0a4cabe7236085
+Author: Khanh Nguyen <duykhanh1310@gmail.com>
+Date:   Sun Nov 4 19:08:14 2018 +0700
+
+    - Paging Search
+    - Search result improvement
+
+commit a3e729a0261588cf07ee495af8fdef6a31eb2e06
+Author: Khanh Nguyen <duykhanh1310@gmail.com>
+Date:   Sat Nov 3 18:42:26 2018 +0700
+
+    - Make Footer, make paginition
+
+commit 3b43815e928254dd0fb48faf2f39f982663a1e27
+Author: Khanh Nguyen <duykhanh1310@gmail.com>
+Date:   Thu Nov 1 20:51:16 2018 +0700
+
+    - Filter truck according price
+    - Add price tag
+
+commit b2516fbb22319f92b400c4ef75845c325081f00f
+Author: thehedwig <duykhanh1310@gmail.com>
+Date:   Wed Oct 31 11:28:38 2018 +0700
+
+    commit SKETCH
+
+commit 2d935502a7c1f6b512d81118e8de379d41068b24
+Author: thehedwig <duykhanh1310@gmail.com>
+Date:   Wed Oct 31 09:02:53 2018 +0700
+
+    - Fix edit feature
+
+commit 49481841efed18500f8f56514c197ebbcbd51a75
+Author: thehedwig <duykhanh1310@gmail.com>
+Date:   Mon Oct 29 22:36:35 2018 +0700
+
+    - add yarnlock
+
+commit a7a480f4dd51d5d98b363c408fdc4d21965af5a8
+Author: thehedwig <duykhanh1310@gmail.com>
+Date:   Mon Oct 29 22:36:26 2018 +0700
+
+    - add history and mongodb package
+
+commit 19c0c1d0a4c322f9889983815da63ea462651bf5
+Author: thehedwig <duykhanh1310@gmail.com>
+Date:   Mon Oct 29 22:36:10 2018 +0700
+
+    -
+
+commit b4cc468ba7c12b242056803200237f03ad510ad2
+Author: thehedwig <duykhanh1310@gmail.com>
+Date:   Mon Oct 29 22:35:53 2018 +0700
+
+    - Count parking Address
+    - Count Description
+    - Add Regex Truck Plate
+    - Return to home after create success
+
+commit 3f27fe4d454ca14d00652bfa35d0b8406ff54006
+Author: thehedwig <duykhanh1310@gmail.com>
+Date:   Mon Oct 29 17:38:24 2018 +0700
+
+    - Make Delete Modal
+    - Fetch Single truck and display for edit success
+
+commit 1930313900e17d52c9cdac1149be0078850f3874
+Author: thehedwig <duykhanh1310@gmail.com>
+Date:   Mon Oct 29 00:10:41 2018 +0700
+
+    - Build truck create, delete and fetch single truck
+    - Create truck success
+    - Delete truck success
+    - Fetch single truck success
+
+commit 6f21a14382ecf5352b6504ff73bf66ed6c835dcb
+Merge: f98265c 86ffe73
+Author: Duy Khanh <duykhanh1310@gmail.com>
+Date:   Sun Oct 28 00:30:25 2018 +0700
+
+    Merge pull request #2 from kenvandemar/feature/Make-home-page-and-Create-UI
+    
+    - Add file
+
+commit 86ffe73aab44ef271f834b80742a2d9041eecfe7
+Author: thehedwig <duykhanh1310@gmail.com>
+Date:   Sun Oct 28 00:29:39 2018 +0700
+
+    - Add file
+
+commit f98265c2712ba73f1b22b72c7139079932fe2dac
+Merge: bfb6981 eb4452e
+Author: Duy Khanh <duykhanh1310@gmail.com>
+Date:   Sun Oct 28 00:27:50 2018 +0700
+
+    Merge pull request #1 from kenvandemar/feature/Make-home-page-and-Create-UI
+    
+    Feature/make home page and create ui, setup backend and fetch data
+
+commit eb4452e1df9bef2a4ba11da61f40ba8b95c67ac6
+Author: thehedwig <duykhanh1310@gmail.com>
+Date:   Sun Oct 28 00:22:58 2018 +0700
+
+    - Add Truck Model
+
+commit 62d1d38aaf8cf3b40ee011644f09ade3c5acc94a
+Author: thehedwig <duykhanh1310@gmail.com>
+Date:   Sun Oct 28 00:22:32 2018 +0700
+
+    - Done Home Page UI
+    - Done Create Page UI
+    - Done Truck Schema
+    - Done Basic Restful API
+    - Setup truck module to fetch API
+    - Done fetch trucks API and display trucks
+
+commit bfb6981fc24025fff56f3f1839b3f12de359fe18
+Author: thehedwig <duykhanh1310@gmail.com>
+Date:   Sat Oct 27 13:52:14 2018 +0700
+
+    - Done Login UI and link to home page
+
+commit ab46f7512dd1c3a81eb73b44591bd8037c53aae9
+Author: thehedwig <duykhanh1310@gmail.com>
+Date:   Wed Oct 24 23:48:38 2018 +0700
+
+    - Setup server and client separate successful
+
+commit bca22ab7436a047e17418d6bdf2c1036b6fd8cc1
+Author: thehedwig <duykhanh1310@gmail.com>
+Date:   Wed Oct 24 23:47:15 2018 +0700
+
+    - Setup server and client separately successful
+
+commit 36edf56e8f8ef74f6587bf619f518062da516f05
+Author: thehedwig <nguyen.duy.khanh@miyatsu.vn>
+Date:   Wed Oct 24 20:48:12 2018 +0700
+
+    Initial commit from Create React App

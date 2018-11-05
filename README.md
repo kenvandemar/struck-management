@@ -4,6 +4,7 @@
 - Using MERN stack: Mongo, Express, ReactJS and NodeJS
 - Using Redux-immutable to manage state
 - Using GIT to manage source code
+- Except manage state, everything is written in pure JS
 
 # Run Development
 ## Import DB
