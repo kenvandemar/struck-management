@@ -29,6 +29,7 @@
   font-size: 14px;
   outline: none;
   background-color: transparent;
+  -webkit-appearance: none;
 }
 
 .searchInput::-webkit-search-cancel-button {
