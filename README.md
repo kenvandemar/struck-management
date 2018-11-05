@@ -11,6 +11,7 @@
  - yarn install or npm install
  - yarn run:server to start server
  - yarn run:client to start client
+ - yarn run watch-css to compile SCSS to CSS and watch CSS change
  - Login just for decoration and design purpose, just click Login button to navigate to the home page
 
 # Run production on local
@@ -20,6 +21,7 @@
 
 # Have done:
 - Create, Read, Update and Delete trucks
+- Able to delete item from search page
 - Search full text
 - Sort trucks bases on Cargo type and price
 - Build Mock API server
