@@ -36,7 +36,6 @@ router.get('/trucks/:page/:id', function(req, res, next) {
         if (err) {
             console.error('Error retrieving all product by id!');
         } else {
-            console.log('server product = ' + JSON.stringify(truck));
             res.json(truck);
         }
     })
@@ -76,7 +75,6 @@ router.get("/search/:page", function(req, res, next) {
         { "$match": { "$text": { "$search": q }}},
         { "$group": {
             "_id": null,
-            // "Total_Results": { "$sum": 1 },
             "trucks": {  
                 "$push": {
                     "_id": "$_id",

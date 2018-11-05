@@ -29,7 +29,9 @@ class Autocomplete extends Component {
   UNSAFE_componentWillReceiveProps(nextProps) {
     let value = nextProps.value;
     if (nextProps.name === 'cargoType' && value !== undefined) {
-      value = value.split(',');
+      value = value.split(' ').join('');
+      value = value.trim().split(',');
+
       this.setState({
         items: value
       });
@@ -128,16 +130,28 @@ class Autocomplete extends Component {
   };
 
   _onRemoveTag(index) {
-    this.setState(state => ({
-      items: state.items.filter((item, i) => i !== index),
-      userInput: ''
-    }));
+    this.setState(
+      {
+        items: this.state.items.filter((item, i) => i !== index),
+        userInput: ''
+      },
+      () => {
+        var handleCargoUpdate = this.props.handleToUpdate;
+        var handleDriveUpdate = this.props.handleDriveUpdate;
+        if (this.props.name === 'cargoType') {
+          handleCargoUpdate(this.state.items);
+        }
+        if (this.props.name === 'driver') {
+          handleDriveUpdate(this.state.userInput);
+        }
+      }
+    );
   }
   _renderInputValue = _ => {
     let inputValue = '';
-    const { isSubmitForm, value } = this.props;
+    const { isSubmitForm } = this.props;
 
-    const { userInput, showSuggestions, items } = this.state;
+    const { userInput } = this.state;
 
     if (isSubmitForm !== undefined && isSubmitForm) {
       inputValue = '';
